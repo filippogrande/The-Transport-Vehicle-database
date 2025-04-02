@@ -6,6 +6,15 @@ CREATE TYPE tipo_media_enum AS ENUM ('Immagine', 'Video', 'Documento');
 CREATE TYPE licenza_media_enum AS ENUM ('Pubblico dominio', 'Creative Commons', 'Proprietario');
 CREATE TYPE stato_modifica_enum AS ENUM ('In attesa', 'Approvato', 'Rifiutato');
 
+CREATE TABLE nazione (
+    nome VARCHAR(100) UNIQUE NOT NULL PRIMARY KEY, -- Nome ufficiale della nazione
+    codice_iso VARCHAR(3) UNIQUE , -- Codice ISO 3166-1 Alpha-3 (es. ITA, FRA, USA)
+    codice_iso2 VARCHAR(2) UNIQUE , -- Codice ISO 3166-1 Alpha-2 (es. IT, FR, US)
+    continente VARCHAR(50), -- Continente di appartenenza
+    capitale VARCHAR(100), -- Capitale della nazione
+    bandiera TEXT -- BLOB
+);
+
 CREATE TABLE azienda_costruttrice (
     id_azienda SERIAL PRIMARY KEY,
     nome VARCHAR(255) UNIQUE NOT NULL,
@@ -23,14 +32,6 @@ CREATE TABLE azienda_costruttrice (
     FOREIGN KEY (nazione) REFERENCES nazione(nome) ON DELETE SET NULL
 );
 
-CREATE TABLE nazione (
-    nome VARCHAR(100) UNIQUE NOT NULL PRIMARY KEY, -- Nome ufficiale della nazione
-    codice_iso VARCHAR(3) UNIQUE , -- Codice ISO 3166-1 Alpha-3 (es. ITA, FRA, USA)
-    codice_iso2 VARCHAR(2) UNIQUE , -- Codice ISO 3166-1 Alpha-2 (es. IT, FR, US)
-    continente VARCHAR(50), -- Continente di appartenenza
-    capitale VARCHAR(100), -- Capitale della nazione
-    bandiera TEXT -- BLOB
-);
 
 CREATE TABLE modello (
     id_modello SERIAL PRIMARY KEY,
@@ -122,7 +123,7 @@ CREATE TABLE stato_modello_azienda (
     id_modello INT NOT NULL,
     stato_veicolo stato_veicolo_enum NOT NULL,
     totale INT DEFAULT 0,
-    FOREIGN KEY (id_azienda) REFERENCES azienda_operatrice(id_azienda) ON DELETE CASCADE,
+    FOREIGN KEY (id_azienda) REFERENCES azienda_operatrice(id_azienda_operatrice) ON DELETE CASCADE,
     FOREIGN KEY (id_modello) REFERENCES modello(id_modello) ON DELETE CASCADE,
     PRIMARY KEY (id_azienda, id_modello, stato_veicolo)
 );
