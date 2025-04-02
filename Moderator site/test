@@ -1,0 +1,2 @@
+cd /websites/websites/ttdb && git pull
+cd /websites/websites/moderatore && git pull
