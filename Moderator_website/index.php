@@ -4,7 +4,7 @@ ini_set('display_errors', 1);
 error_reporting(E_ALL);
 
 // Collegamento al database
-require_once '../Utilities/dbconnect.php';
+require_once '/Utilities/dbconnect.php';
 
 // Query per ottenere tutte le modifiche in sospeso raggruppate per id_gruppo_modifica
 $query = "

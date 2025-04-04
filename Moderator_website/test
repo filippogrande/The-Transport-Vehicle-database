@@ -1,6 +1,6 @@
 
 su - root
-cd websites/websites/ttvd/ 
+cd ../websites/websites/ttvd/ 
 git pull
 systemctl restart nginx
 
