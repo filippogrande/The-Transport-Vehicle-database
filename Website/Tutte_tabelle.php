@@ -2,10 +2,12 @@
 require_once 'utilities/dbconnect.php'; // Collegamento al database
 
 try {
+    // Ottieni tutte le tabelle dallo schema 'public'
     $query = "SELECT table_name FROM information_schema.tables WHERE table_schema = 'public'";
     $result = $pdo->query($query);
     $tables = $result->fetchAll(PDO::FETCH_COLUMN);
 
+    // Inizia la struttura HTML della pagina
     echo "<!DOCTYPE html>
     <html lang='it'>
     <head>
@@ -25,23 +27,33 @@ try {
             </thead>
             <tbody>";
 
+    // Loop attraverso tutte le tabelle
     foreach ($tables as $table) {
+        // Controlla quante righe ci sono nella tabella
         $countQuery = "SELECT COUNT(*) FROM \"$table\"";
         $countResult = $pdo->query($countQuery);
         $rowCount = $countResult->fetchColumn();
 
+        // Se la tabella è vuota, mostra "Nessun dato"
+        if ($rowCount == 0) {
+            $rowCount = "Nessun dato";
+        }
+
+        // Stampa la tabella con il numero di righe
         echo "<tr>
                 <td>$table</td>
                 <td>$rowCount</td>
               </tr>";
     }
 
+    // Chiudi la struttura HTML
     echo "  </tbody>
         </table>
     </body>
     </html>";
 
 } catch (PDOException $e) {
+    // Gestione degli errori
     echo "Errore: " . $e->getMessage();
 }
 ?>

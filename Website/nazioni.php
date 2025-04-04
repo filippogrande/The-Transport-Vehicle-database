@@ -7,6 +7,9 @@ try {
     $stmt = $pdo->query($query);
     $nazioni = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
+    // Includi la navbar
+    include 'navbar.html'; // Aggiungi il percorso corretto se necessario
+
     echo "<!DOCTYPE html>
     <html lang='it'>
     <head>
@@ -18,7 +21,8 @@ try {
         <script src='https://kit.fontawesome.com/your-fontawesome-kit.js' crossorigin='anonymous'></script>
     </head>
     <body class='container mt-4'>
-        <h2 class='mb-3'>Elenco delle Nazioni</h2>
+        <h1 class='mb-3'>Nazioni</h1>  <!-- Scritta "Nazioni" -->
+        <h2 class='mb-3'>Elenco delle Nazioni</h2> <!-- Titolo della pagina -->
         <table class='table table-bordered table-striped'>
             <thead class='table-dark'>
                 <tr>
