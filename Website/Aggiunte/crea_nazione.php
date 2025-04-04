@@ -4,7 +4,7 @@ ini_set('display_errors', 1);
 error_reporting(E_ALL);
 
 // Collegamento al database
-require_once 'Utilities/dbconnect.php';
+require_once '../Utilities/dbconnect.php';  // Corretto il percorso
 
 // Verifica la connessione al database
 if (!$pdo) {
@@ -91,3 +91,4 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     </form>
 </body>
 </html>
+
