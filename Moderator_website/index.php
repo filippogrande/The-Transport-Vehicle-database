@@ -3,27 +3,7 @@
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
 
-// Stampa i dati inviati tramite POST per il debug
-echo "<pre>";
-var_dump($_POST);  // Stampa tutte le variabili inviate tramite POST
-echo "</pre>";
-
-// Prosegui con il resto del codice...
 require_once 'Utilities/dbconnect.php';
-
-// Ricevi i dati dal form
-$id_gruppo_modifica = $_POST['id_gruppo_modifica'] ?? '';
-$tabella_destinazione = $_POST['tabella_destinazione'] ?? '';
-$modifiche_selezionate = $_POST['modifica_selezionata'] ?? [];
-
-// Verifica che siano stati inviati i dati
-if (empty($modifiche_selezionate)) {
-    $delete_query = "DELETE FROM modifiche_in_sospeso WHERE id_gruppo_modifica = :id_gruppo_modifica";
-    $delete_stmt = $pdo->prepare($delete_query);
-    $delete_stmt->bindParam(':id_gruppo_modifica', $id_gruppo_modifica, PDO::PARAM_INT);
-    $delete_stmt->execute();
-    exit;
-}
 
 // DEFINIZIONE FUNZIONE formatMedia()
 function formatMedia($value) {
@@ -70,7 +50,7 @@ try {
 
         // Recupera tutte le modifiche associate a quell'id_gruppo_modifica
         $query = "
-            SELECT campo_modificato, valore_nuovo, valore_vecchio, stato, autore
+            SELECT id_modifica, campo_modificato, valore_nuovo, valore_vecchio, stato, autore
             FROM modifiche_in_sospeso
             WHERE id_gruppo_modifica = :id_gruppo_modifica
             ORDER BY campo_modificato ASC
@@ -112,38 +92,38 @@ try {
             </div>
 
             <form action="processa_modifica.php" method="POST">
-    <div class="table-responsive">
-        <table class="table table-bordered table-striped align-middle text-center">
-            <thead class="table-dark">
-                <tr>
-                    <th>Campo Modificato</th>
-                    <th>Nuovo Valore</th>
-                    <th>Vecchio Valore</th>
-                    <th>Autore</th>
-                    <th>Seleziona</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php foreach ($modifiche as $modifica): ?>
-                    <tr>
-                        <td><?= htmlspecialchars($modifica['campo_modificato']) ?></td>
-                        <td><?= formatMedia($modifica['valore_nuovo']) ?></td>
-                        <td><?= $modifica['valore_vecchio'] !== null ? formatMedia($modifica['valore_vecchio']) : "<i>Nessun valore precedente</i>" ?></td>
-                        <td><?= htmlspecialchars($modifica['autore']) ?></td>
-                        <td>
-    <!-- Imposta l'id_modifica come valore della checkbox e la checkbox come selezionata di default -->
-    <input type="checkbox" name="modifica_selezionata[]" value="<?= htmlspecialchars($modifica['id_modifica'] ?? '') ?>" checked>
-</td>
+                <input type="hidden" name="id_gruppo_modifica" value="<?= htmlspecialchars($id_gruppo_modifica) ?>">
+                <div class="table-responsive">
+                    <table class="table table-bordered table-striped align-middle text-center">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>Campo Modificato</th>
+                                <th>Nuovo Valore</th>
+                                <th>Vecchio Valore</th>
+                                <th>Autore</th>
+                                <th>Seleziona</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php foreach ($modifiche as $modifica): ?>
+                                <tr>
+                                    <td><?= htmlspecialchars($modifica['campo_modificato']) ?></td>
+                                    <td><?= formatMedia($modifica['valore_nuovo']) ?></td>
+                                    <td><?= $modifica['valore_vecchio'] !== null ? formatMedia($modifica['valore_vecchio']) : "<i>Nessun valore precedente</i>" ?></td>
+                                    <td><?= htmlspecialchars($modifica['autore']) ?></td>
+                                    <td>
+                                        <!-- Imposta l'id_modifica come valore della checkbox e la checkbox come selezionata di default -->
+                                        <input type="checkbox" name="modifica_selezionata[]" value="<?= htmlspecialchars($modifica['id_modifica']) ?>" <?= isset($modifica['id_modifica']) ? 'checked' : '' ?>>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                </div>
 
-                    </tr>
-                <?php endforeach; ?>
-            </tbody>
-        </table>
-    </div>
-
-    <!-- Bottone per inviare il form -->
-    <button type="submit" class="btn btn-primary">Invia Modifiche</button>
-</form>
+                <!-- Bottone per inviare il form -->
+                <button type="submit" class="btn btn-primary">Invia Modifiche</button>
+            </form>
 
         <?php endif; ?>
     </div>
