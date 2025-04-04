@@ -9,7 +9,10 @@ $modifiche_selezionate = $_POST['modifica_selezionata']; // Gli ID delle modific
 
 // Verifica che siano stati inviati i dati
 if (empty($modifiche_selezionate)) {
-    echo "Nessuna modifica selezionata.";
+    $delete_query = "DELETE FROM modifiche_in_sospeso WHERE id_gruppo_modifica = :id_gruppo_modifica";
+    $delete_stmt = $pdo->prepare($delete_query);
+    $delete_stmt->bindParam(':id_gruppo_modifica', $id_gruppo_modifica, PDO::PARAM_INT);
+    $delete_stmt->execute();
     exit;
 }
 
@@ -35,7 +38,14 @@ try {
 
     // Se tutte le modifiche sono state applicate senza errori, confermiamo la transazione
     $pdo->commit();
-    echo "Modifiche applicate correttamente!";
+
+    // Elimina tutte le modifiche con lo stesso id_gruppo_modifica
+    $delete_query = "DELETE FROM modifiche_in_sospeso WHERE id_gruppo_modifica = :id_gruppo_modifica";
+    $delete_stmt = $pdo->prepare($delete_query);
+    $delete_stmt->bindParam(':id_gruppo_modifica', $id_gruppo_modifica, PDO::PARAM_INT);
+    $delete_stmt->execute();
+
+    echo "Modifiche applicate correttamente e tutte le modifiche in sospeso sono state rimosse!";
 } catch (Exception $e) {
     // In caso di errore, facciamo il rollback della transazione
     $pdo->rollBack();
