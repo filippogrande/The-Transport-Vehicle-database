@@ -13,8 +13,6 @@ try {
     die("Errore di connessione: " . $e->getMessage());
 }
 
-include 'navbar.html';
-
 try {
     // Recupero delle nazioni dal database
     $query = "SELECT * FROM nazione ORDER BY nome";
@@ -42,14 +40,15 @@ try {
     $nazioni_messaggio = "Errore generico: " . $e->getMessage();
 }
 
-include 'header.php'; // Include l'HTML separato
+include 'header.php'; // Includi il file header.php
 
 ?>
 
 <!-- Visualizzazione del messaggio (se presente) e della tabella -->
 <div class="container mt-4">
     <h1 class="mb-3">Nazioni</h1>
-    <a href="Aggiunte/crea_nazione.php" class="btn btn-primary mb-3">Crea Nuova Nazione</a>
+    <a href="Aggiunte/crea_nazione.php" class="btn btn-primary mb-3 ms-auto d-block" style="width: auto;">Crea Nuova Nazione</a>
+
 
     <?php if ($nazioni_messaggio): ?>
         <div class="alert alert-warning"><?php echo $nazioni_messaggio; ?></div>

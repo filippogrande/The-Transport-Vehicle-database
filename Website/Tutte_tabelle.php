@@ -14,7 +14,7 @@ try {
         echo "<p>Non ci sono tabelle nel database.</p>";
     } else {
         // Inizia la struttura HTML della pagina
-        include 'navbar.html';
+        include 'header.html';
         echo "<!DOCTYPE html>
         <html lang='it'>
         <head>
