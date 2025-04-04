@@ -132,7 +132,7 @@ CREATE TABLE modifiche_in_sospeso (
     id_modifica SERIAL PRIMARY KEY,
     id_gruppo_modifica INT NOT NULL, -- ID unico per raggruppare più campi modificati in una singola operazione
     tabella_destinazione VARCHAR(50) NOT NULL, -- Nome della tabella modificata
-    id_entita INT NULL, -- ID dell'entità da modificare
+    id_entita TEXT NULL, -- ID dell'entità da modificare
     campo_modificato VARCHAR(50) NOT NULL, -- Nome del campo modificato
     valore_nuovo TEXT NOT NULL, -- Nuovo valore proposto
     valore_vecchio TEXT NULL, -- Valore attuale (per riferimento)

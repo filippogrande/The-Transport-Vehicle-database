@@ -92,39 +92,38 @@ try {
             </div>
 
             <form action="processa_modifica.php" method="POST">
-                <input type="hidden" name="id_gruppo_modifica" value="<?= htmlspecialchars($id_gruppo_modifica) ?>">
-                <input type="hidden" name="tabella_destinazione" value="<?= htmlspecialchars($tabella_destinazione) ?>">
+    <div class="table-responsive">
+        <table class="table table-bordered table-striped align-middle text-center">
+            <thead class="table-dark">
+                <tr>
+                    <th>Campo Modificato</th>
+                    <th>Nuovo Valore</th>
+                    <th>Vecchio Valore</th>
+                    <th>Autore</th>
+                    <th>Seleziona</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php foreach ($modifiche as $modifica): ?>
+                    <tr>
+                        <td><?= htmlspecialchars($modifica['campo_modificato']) ?></td>
+                        <td><?= formatMedia($modifica['valore_nuovo']) ?></td>
+                        <td><?= $modifica['valore_vecchio'] !== null ? formatMedia($modifica['valore_vecchio']) : "<i>Nessun valore precedente</i>" ?></td>
+                        <td><?= htmlspecialchars($modifica['autore']) ?></td>
+                        <td>
+                            <!-- Imposta l'id_modifica come valore della checkbox -->
+                            <input type="checkbox" name="modifica_selezionata[]" value="<?= htmlspecialchars($modifica['id_modifica']) ?>">
+                        </td>
+                    </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
+    </div>
 
-                <div class="table-responsive">
-                    <table class="table table-bordered table-striped align-middle text-center">
-                        <thead class="table-dark">
-                            <tr>
-                                <th>Campo Modificato</th>
-                                <th>Nuovo Valore</th>
-                                <th>Vecchio Valore</th>
-                                <th>Autore</th>
-                                <th>Applica</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php foreach ($modifiche as $modifica): ?>
-                                <tr>
-                                    <td><?= htmlspecialchars($modifica['campo_modificato']) ?></td>
-                                    <td><?= formatMedia($modifica['valore_nuovo']) ?></td>
-                                    <td><?= $modifica['valore_vecchio'] !== null ? formatMedia($modifica['valore_vecchio']) : "<i>Nessun valore precedente</i>" ?></td>
-                                    <td><?= htmlspecialchars($modifica['autore']) ?></td>
-                                    <td>
-                                        <!-- Switch ON/OFF -->
-                                        <input type="checkbox" name="campo_<?= htmlspecialchars($modifica['campo_modificato']) ?>" value="1" checked>
-                                    </td>
-                                </tr>
-                            <?php endforeach; ?>
-                        </tbody>
-                    </table>
-                </div>
+    <!-- Bottone per inviare il form -->
+    <button type="submit" class="btn btn-primary">Invia Modifiche</button>
+</form>
 
-                <button type="submit" class="btn btn-primary">Invia Modifica</button>
-            </form>
         <?php endif; ?>
     </div>
 
