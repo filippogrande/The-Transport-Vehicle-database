@@ -4,24 +4,34 @@ ini_set('display_errors', 1);
 error_reporting(E_ALL);
 
 // Collegamento al database
-require_once 'Utilities/dbconnect.php';
-
-// Verifica la connessione al database
-if (!$pdo) {
-    die("Errore nella connessione al database.");
-} else {
-    echo "Connessione al database riuscita!<br>"; // Questo può essere rimosso in produzione
+try {
+    require_once 'Utilities/dbconnect.php'; // Verifica la connessione al database
+    if (!$pdo) {
+        throw new Exception("Errore nella connessione al database.");
+    } else {
+        // Connessione riuscita
+        echo "Connessione al database riuscita!<br>"; // Puoi rimuovere questa linea in produzione
+    }
+} catch (Exception $e) {
+    die("Errore di connessione: " . $e->getMessage());
 }
 
 try {
     // Recupero delle nazioni dal database
-    $query = "SELECT nome, codice_iso, codice_iso2, continente, capitale FROM nazione ORDER BY nome";
+    $query = "SELECT * FROM nazione ORDER BY nome";
     $stmt = $pdo->query($query);
+
+    // Controlla se la query è stata eseguita correttamente
+    if ($stmt === false) {
+        throw new Exception("Errore nella query: " . implode(", ", $pdo->errorInfo()));
+    }
+
+    // Recupero dei dati
     $nazioni = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     // Controllo se ci sono dati
     if (empty($nazioni)) {
-        echo "Nessuna nazione trovata nel database.<br>";  // Messaggio se non ci sono dati
+        echo "Nessuna nazione trovata nel database.<br>"; // Messaggio se non ci sono dati
     } else {
         // Includi la navbar
         include 'navbar.html'; // Aggiungi il percorso corretto se necessario
@@ -37,8 +47,8 @@ try {
             <script src='https://kit.fontawesome.com/your-fontawesome-kit.js' crossorigin='anonymous'></script>
         </head>
         <body class='container mt-4'>
-            <h1 class='mb-3'>Nazioni</h1>  <!-- Scritta "Nazioni" -->
-            <h2 class='mb-3'>Elenco delle Nazioni</h2> <!-- Titolo della pagina -->
+            <h1 class='mb-3'>Nazioni</h1>
+            <h2 class='mb-3'>Elenco delle Nazioni</h2>
             <table class='table table-bordered table-striped'>
                 <thead class='table-dark'>
                     <tr>
@@ -75,7 +85,10 @@ try {
     }
 
 } catch (PDOException $e) {
-    // Gestione degli errori se qualcosa va storto durante la query
+    // Gestione degli errori di query
     echo "Errore nella query: " . $e->getMessage();
+} catch (Exception $e) {
+    // Gestione di altri errori
+    echo "Errore generico: " . $e->getMessage();
 }
 ?>

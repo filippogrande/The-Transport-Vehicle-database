@@ -1,2 +1,8 @@
-cd /websites/websites/ttdb && git pull
-7GMMg50Mhy
+
+su - root
+cd websites/websites/ttvd/ 
+git pull
+systemctl restart nginx
+
+su - postgres
+psql -U postgres -d ttvd_db
