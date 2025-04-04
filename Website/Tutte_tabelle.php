@@ -54,6 +54,19 @@ try {
 
 } catch (PDOException $e) {
     // Gestione degli errori
-    echo "Errore: " . $e->getMessage();
+    echo "<!DOCTYPE html>
+    <html lang='it'><head>
+        <meta charset='UTF-8'>
+        <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+        <title>Tabelle del Database</title>
+        <link rel='stylesheet' href='https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css'>
+    </head>
+    <body class='container mt-4'>
+        <h2 class='mb-3'>Errore</h2>
+        <div class='alert alert-danger' role='alert'>
+            Errore: " . $e->getMessage() . "
+        </div>
+        <tbody> " . $e->getMessage();
+
 }
 ?>
