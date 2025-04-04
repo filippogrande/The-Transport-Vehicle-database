@@ -40,7 +40,7 @@ try {
     $nazioni_messaggio = "Errore generico: " . $e->getMessage();
 }
 
-include 'header.php'; // Includi il file header.php
+include 'header.html'; // Includi il file header.php
 
 ?>
 
