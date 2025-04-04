@@ -1,5 +1,5 @@
 <?php
-require_once 'utilities/dbconnect.php'; // Collegamento al database
+require_once 'Utilities/dbconnect.php'; // Collegamento al database
 
 try {
     // Recupero delle nazioni dal database

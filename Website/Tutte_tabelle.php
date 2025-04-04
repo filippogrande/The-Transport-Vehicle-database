@@ -2,7 +2,7 @@
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
 
-require_once 'utilities/dbconnect.php'; // Collegamento al database
+require_once 'Utilities/dbconnect.php'; // Collegamento al database
 
 try {
     // Ottieni tutte le tabelle dallo schema 'public'
