@@ -1,10 +1,33 @@
 <?php
-// Abilita la visualizzazione degli errori durante lo sviluppo
+// Mostra errori
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
 
-// Collegamento al database
 require_once 'Utilities/dbconnect.php';
+
+// DEFINIZIONE FUNZIONE formatMedia()
+function formatMedia($value) {
+    if (!$value) {
+        return "<i>Nessun valore</i>";
+    }
+
+    $value = trim($value);
+    $image_extensions = ['jpg', 'jpeg', 'png', 'gif'];
+    $video_extensions = ['mp4', 'webm', 'ogg'];
+    $ext = strtolower(pathinfo($value, PATHINFO_EXTENSION));
+
+    if (in_array($ext, $image_extensions)) {
+        $file_path = (filter_var($value, FILTER_VALIDATE_URL)) ? $value : "../Website/" . ltrim($value, '/');
+        return "<img src='$file_path' alt='Immagine' style='max-width: 200px; max-height: 200px;'>";
+    }
+
+    if (in_array($ext, $video_extensions)) {
+        $file_path = (filter_var($value, FILTER_VALIDATE_URL)) ? $value : "../Website/" . ltrim($value, '/');
+        return "<video controls style='max-width: 300px; max-height: 200px;'><source src='$file_path' type='video/$ext'>Il tuo browser non supporta il video.</video>";
+    }
+
+    return htmlspecialchars($value);
+}
 
 try {
     // Recupera il primo id_gruppo_modifica disponibile
@@ -36,35 +59,6 @@ try {
     die("Errore database: " . $e->getMessage());
 }
 
-// Funzione per gestire immagini e video con il percorso corretto
-function formatMedia($value) {
-    if (!$value) {
-        return "<i>Nessun valore</i>";
-    }
-
-    // Se il valore è un link assoluto (http/https), lo lasciamo invariato
-    if (filter_var($value, FILTER_VALIDATE_URL)) {
-        $file_path = $value;
-    } else {
-        // Se è un percorso relativo, aggiungiamo '../Website/' davanti
-        $file_path = "../Website/" . ltrim($value, '/');
-    }
-
-    $ext = strtolower(pathinfo($file_path, PATHINFO_EXTENSION));
-
-    // Se è un'immagine
-    if (in_array($ext, ['jpg', 'jpeg', 'png', 'gif'])) {
-        return "<img src='$file_path' alt='Immagine' style='max-width: 200px; max-height: 200px;'>";
-    }
-
-    // Se è un video
-    if (in_array($ext, ['mp4', 'webm', 'ogg'])) {
-        return "<video controls style='max-width: 300px; max-height: 200px;'><source src='$file_path' type='video/$ext'>Il tuo browser non supporta il video.</video>";
-    }
-
-    // Se non è né immagine né video, mostriamo un link
-    return "<a href='$file_path' target='_blank'>" . htmlspecialchars($file_path) . "</a>";
-}
 ?>
 
 <!DOCTYPE html>
@@ -73,30 +67,51 @@ function formatMedia($value) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Modifiche in sospeso</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
-<body>
-    <h1>Modifiche in Sospeso</h1>
+<body class="bg-light">
 
-    <?php if (empty($modifiche)): ?>
-        <p>Nessuna modifica in attesa.</p>
-    <?php else: ?>
-        <h2>Tabella: <?= htmlspecialchars($tabella_destinazione) ?> | ID Gruppo: <?= htmlspecialchars($id_gruppo_modifica) ?></h2>
-        <table border="1">
-            <tr>
-                <th>Campo Modificato</th>
-                <th>Nuovo Valore</th>
-                <th>Vecchio Valore</th>
-                <th>Autore</th>
-            </tr>
-            <?php foreach ($modifiche as $modifica): ?>
-                <tr>
-                    <td><?= htmlspecialchars($modifica['campo_modificato']) ?></td>
-                    <td><?= formatMedia($modifica['valore_nuovo']) ?></td>
-                    <td><?= $modifica['valore_vecchio'] !== null ? formatMedia($modifica['valore_vecchio']) : "<i>Nessun valore precedente</i>" ?></td>
-                    <td><?= htmlspecialchars($modifica['autore']) ?></td>
-                </tr>
-            <?php endforeach; ?>
-        </table>
-    <?php endif; ?>
+    <div class="container my-5">
+        <h1 class="mb-4 text-primary">Modifiche in Sospeso</h1>
+
+        <?php if (empty($modifiche)): ?>
+            <div class="alert alert-info">Nessuna modifica in attesa.</div>
+        <?php else: ?>
+            <div class="mb-4">
+                <h5>
+                    <span class="badge bg-secondary">Tabella: <?= htmlspecialchars($tabella_destinazione) ?></span>
+                    <span class="badge bg-info text-dark">ID Gruppo: <?= htmlspecialchars($id_gruppo_modifica) ?></span>
+                </h5>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table table-bordered table-striped align-middle text-center">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Campo Modificato</th>
+                            <th>Nuovo Valore</th>
+                            <th>Vecchio Valore</th>
+                            <th>Autore</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($modifiche as $modifica): ?>
+                            <tr>
+                                <td><?= htmlspecialchars($modifica['campo_modificato']) ?></td>
+                                <td><?= formatMedia($modifica['valore_nuovo']) ?></td>
+                                <td><?= $modifica['valore_vecchio'] !== null ? formatMedia($modifica['valore_vecchio']) : "<i>Nessun valore precedente</i>" ?></td>
+                                <td><?= htmlspecialchars($modifica['autore']) ?></td>
+                            </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
+        <?php endif; ?>
+    </div>
+
+    <!-- Bootstrap JS (opzionale, solo se serve per interattività) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
+
