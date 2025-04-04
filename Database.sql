@@ -130,7 +130,8 @@ CREATE TABLE stato_modello_azienda (
 
 CREATE TABLE modifiche_in_sospeso (
     id_modifica SERIAL PRIMARY KEY,
-    tabella_destinazione VARCHAR(50) NOT NULL, -- Nome della tabella modificata (es. veicolo, azienda_operatrice, ecc.)
+    id_gruppo_modifica INT NOT NULL, -- ID unico per raggruppare più campi modificati in una singola operazione
+    tabella_destinazione VARCHAR(50) NOT NULL, -- Nome della tabella modificata
     id_entita INT NOT NULL, -- ID dell'entità da modificare
     campo_modificato VARCHAR(50) NOT NULL, -- Nome del campo modificato
     valore_nuovo TEXT NOT NULL, -- Nuovo valore proposto
@@ -139,4 +140,5 @@ CREATE TABLE modifiche_in_sospeso (
     autore VARCHAR(255), -- Utente che ha fatto la richiesta
     data_richiesta TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
 
