@@ -112,7 +112,7 @@ try {
                         <td><?= htmlspecialchars($modifica['autore']) ?></td>
                         <td>
                             <!-- Imposta l'id_modifica come valore della checkbox -->
-                            <input type="checkbox" name="modifica_selezionata[]" value="<?= htmlspecialchars($modifica['id_modifica']) ?>">
+                            <input type="checkbox" name="modifica_selezionata[]" value="<?= htmlspecialchars($modifica['id_modifica'] ?? '') ?>">
                         </td>
                     </tr>
                 <?php endforeach; ?>
