@@ -20,7 +20,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $capitale = $_POST['capitale'];
 
     // Creazione della cartella per l'immagine
-    $cartella = "../photo/nazione/" . strtolower(str_replace(' ', '_', $nome)) . "/";
+    $cartella = "../Photo/nazione/" . strtolower(str_replace(' ', '_', $nome)) . "/";
     if (!is_dir($cartella)) {
         mkdir($cartella, 0777, true);
     }
