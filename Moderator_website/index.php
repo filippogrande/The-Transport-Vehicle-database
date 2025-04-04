@@ -6,24 +6,35 @@ error_reporting(E_ALL);
 // Collegamento al database
 require_once 'Utilities/dbconnect.php';
 
-// Query per ottenere tutte le modifiche in sospeso raggruppate per id_gruppo_modifica
-$query = "
-    SELECT id_gruppo_modifica, tabella_destinazione, campo_modificato, valore_nuovo, valore_vecchio, stato, autore, data_richiesta
-    FROM modifiche_in_sospeso
-    WHERE stato = 'In attesa'
-    ORDER BY id_gruppo_modifica
-";
+try {
+    // Recupera il primo id_gruppo_modifica disponibile
+    $query = "SELECT id_gruppo_modifica FROM modifiche_in_sospeso WHERE stato = 'In attesa' ORDER BY data_richiesta ASC LIMIT 1";
+    $stmt = $pdo->query($query);
+    $first_group = $stmt->fetch(PDO::FETCH_ASSOC);
 
-$stmt = $pdo->prepare($query);
-$stmt->execute();
-$modifiche = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    if ($first_group) {
+        $id_gruppo_modifica = $first_group['id_gruppo_modifica'];
 
-// Raggruppamento delle modifiche per id_gruppo_modifica
-$modifiche_raggruppate = [];
-foreach ($modifiche as $modifica) {
-    $modifiche_raggruppate[$modifica['id_gruppo_modifica']][] = $modifica;
+        // Ora recuperiamo tutte le modifiche con lo stesso id_gruppo_modifica
+        $query = "
+            SELECT tabella_destinazione, campo_modificato, valore_nuovo, valore_vecchio, stato, autore, data_richiesta
+            FROM modifiche_in_sospeso
+            WHERE id_gruppo_modifica = :id_gruppo_modifica
+            ORDER BY data_richiesta ASC
+        ";
+
+        $stmt = $pdo->prepare($query);
+        $stmt->bindParam(':id_gruppo_modifica', $id_gruppo_modifica, PDO::PARAM_INT);
+        $stmt->execute();
+        $modifiche = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    } else {
+        $modifiche = [];
+    }
+} catch (PDOException $e) {
+    die("Errore database: " . $e->getMessage());
 }
 ?>
+
 
 <!DOCTYPE html>
 <html lang="it">
