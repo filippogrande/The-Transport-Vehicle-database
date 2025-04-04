@@ -12,10 +12,11 @@ try {
     $stmt = $pdo->query($query);
     $first_group = $stmt->fetch(PDO::FETCH_ASSOC);
 
+    $modifiche = [];
     if ($first_group) {
         $id_gruppo_modifica = $first_group['id_gruppo_modifica'];
 
-        // Ora recuperiamo tutte le modifiche con lo stesso id_gruppo_modifica
+        // Recupera tutte le modifiche associate a quell'id_gruppo_modifica
         $query = "
             SELECT tabella_destinazione, campo_modificato, valore_nuovo, valore_vecchio, stato, autore, data_richiesta
             FROM modifiche_in_sospeso
@@ -27,51 +28,46 @@ try {
         $stmt->bindParam(':id_gruppo_modifica', $id_gruppo_modifica, PDO::PARAM_INT);
         $stmt->execute();
         $modifiche = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    } else {
-        $modifiche = [];
     }
 } catch (PDOException $e) {
     die("Errore database: " . $e->getMessage());
 }
 ?>
 
-
 <!DOCTYPE html>
 <html lang="it">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gestione Modifiche - Moderatore</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <title>Modifiche in sospeso</title>
 </head>
-<body class="container mt-4">
-    <h1 class="mb-3">Modifiche in Sospeso</h1>
+<body>
+    <h1>Modifiche in Sospeso</h1>
 
-    <?php foreach ($modifiche_raggruppate as $id_gruppo => $modifiche): ?>
-        <div class="card mb-3">
-            <div class="card-header">
-                <strong>Modifiche Gruppo ID: <?= $id_gruppo ?></strong>
-            </div>
-            <div class="card-body">
-                <?php foreach ($modifiche as $modifica): ?>
-                    <div class="mb-3">
-                        <h5>Tabella: <?= htmlspecialchars($modifica['tabella_destinazione']) ?></h5>
-                        <p><strong>Campo Modificato:</strong> <?= htmlspecialchars($modifica['campo_modificato']) ?></p>
-                        <p><strong>Nuovo Valore:</strong> <?= htmlspecialchars($modifica['valore_nuovo']) ?></p>
-                        <p><strong>Vecchio Valore:</strong> <?= htmlspecialchars($modifica['valore_vecchio']) ?: 'Nessun valore precedente' ?></p>
-                        <p><strong>Autore:</strong> <?= htmlspecialchars($modifica['autore']) ?></p>
-                        <p><strong>Data Richiesta:</strong> <?= htmlspecialchars($modifica['data_richiesta']) ?></p>
-                        <div class="btn-group" role="group" aria-label="Modifiche">
-                            <form action="approva_negazione.php" method="POST">
-                                <input type="hidden" name="id_modifica" value="<?= $modifica['id_modifica'] ?>">
-                                <button type="submit" name="azione" value="approva" class="btn btn-success">Approva</button>
-                                <button type="submit" name="azione" value="nega" class="btn btn-danger">Nega</button>
-                            </form>
-                        </div>
-                    </div>
-                <?php endforeach; ?>
-            </div>
-        </div>
-    <?php endforeach; ?>
+    <?php if (empty($modifiche)): ?>
+        <p>Nessuna modifica in attesa.</p>
+    <?php else: ?>
+        <h2>Modifiche per il gruppo ID: <?= htmlspecialchars($id_gruppo_modifica) ?></h2>
+        <table border="1">
+            <tr>
+                <th>Tabella</th>
+                <th>Campo Modificato</th>
+                <th>Nuovo Valore</th>
+                <th>Vecchio Valore</th>
+                <th>Autore</th>
+                <th>Data Richiesta</th>
+            </tr>
+            <?php foreach ($modifiche as $modifica): ?>
+                <tr>
+                    <td><?= htmlspecialchars($modifica['tabella_destinazione']) ?></td>
+                    <td><?= htmlspecialchars($modifica['campo_modificato']) ?></td>
+                    <td><?= htmlspecialchars($modifica['valore_nuovo']) ?></td>
+                    <td><?= isset($modifica['valore_vecchio']) ? htmlspecialchars($modifica['valore_vecchio']) : "<i>Nessun valore precedente</i>" ?></td>
+                    <td><?= htmlspecialchars($modifica['autore']) ?></td>
+                    <td><?= htmlspecialchars($modifica['data_richiesta']) ?></td>
+                </tr>
+            <?php endforeach; ?>
+        </table>
+    <?php endif; ?>
 </body>
 </html>
