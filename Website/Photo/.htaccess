@@ -1,5 +1,0 @@
-# Blocca l'esecuzione di file PHP nella cartella uploads
-
-<FilesMatch "\.php$">
-deny from all
-</FilesMatch>

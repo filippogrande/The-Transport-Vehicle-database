@@ -117,6 +117,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <input type="file" class="form-control" id="bandiera" name="bandiera" accept="image/*" required>
     </div>
     <button type="submit" class="btn btn-primary">Proponi Nazione</button>
+    <!-- Bottone per andare alla pagina Nazioni -->
+    <a href="../nazioni.php" class="btn btn-secondary">Vai alle Nazioni</a>
 </form>
 
 </body>
