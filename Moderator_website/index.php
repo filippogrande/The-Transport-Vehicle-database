@@ -16,18 +16,25 @@ function formatMedia($value) {
     $video_extensions = ['mp4', 'webm', 'ogg'];
     $ext = strtolower(pathinfo($value, PATHINFO_EXTENSION));
 
+    // Costruiamo il path corretto, puntando all'alias configurato in nginx
+    $file_path = "/photo/" . ltrim($value, '/');
+
+    // Se è immagine
     if (in_array($ext, $image_extensions)) {
-        $file_path = (filter_var($value, FILTER_VALIDATE_URL)) ? $value : "../Website/" . ltrim($value, '/');
         return "<img src='$file_path' alt='Immagine' style='max-width: 200px; max-height: 200px;'>";
     }
 
+    // Se è video
     if (in_array($ext, $video_extensions)) {
-        $file_path = (filter_var($value, FILTER_VALIDATE_URL)) ? $value : "../Website/" . ltrim($value, '/');
-        return "<video controls style='max-width: 300px; max-height: 200px;'><source src='$file_path' type='video/$ext'>Il tuo browser non supporta il video.</video>";
+        return "<video controls style='max-width: 300px; max-height: 200px;'>
+                    <source src='$file_path' type='video/$ext'>Il tuo browser non supporta il video.
+                </video>";
     }
 
-    return htmlspecialchars($value);
+    // Se non è né immagine né video, mostra un link cliccabile
+    return "<a href='$file_path' target='_blank'>" . htmlspecialchars($value) . "</a>";
 }
+
 
 try {
     // Recupera il primo id_gruppo_modifica disponibile
