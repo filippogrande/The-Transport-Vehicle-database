@@ -3,7 +3,27 @@
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
 
+// Stampa i dati inviati tramite POST per il debug
+echo "<pre>";
+var_dump($_POST);  // Stampa tutte le variabili inviate tramite POST
+echo "</pre>";
+
+// Prosegui con il resto del codice...
 require_once 'Utilities/dbconnect.php';
+
+// Ricevi i dati dal form
+$id_gruppo_modifica = $_POST['id_gruppo_modifica'] ?? '';
+$tabella_destinazione = $_POST['tabella_destinazione'] ?? '';
+$modifiche_selezionate = $_POST['modifica_selezionata'] ?? [];
+
+// Verifica che siano stati inviati i dati
+if (empty($modifiche_selezionate)) {
+    $delete_query = "DELETE FROM modifiche_in_sospeso WHERE id_gruppo_modifica = :id_gruppo_modifica";
+    $delete_stmt = $pdo->prepare($delete_query);
+    $delete_stmt->bindParam(':id_gruppo_modifica', $id_gruppo_modifica, PDO::PARAM_INT);
+    $delete_stmt->execute();
+    exit;
+}
 
 // DEFINIZIONE FUNZIONE formatMedia()
 function formatMedia($value) {
