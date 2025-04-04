@@ -32,7 +32,7 @@ try {
 
         // Aggiungi altri casi per le altre tabelle
         default:
-            echo "Tabella non supportata.";
+            echo "Tabella non supportata. tabella_destinazione: $tabella_destinazione";
             exit;
     }
 

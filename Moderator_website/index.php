@@ -111,9 +111,10 @@ try {
                         <td><?= $modifica['valore_vecchio'] !== null ? formatMedia($modifica['valore_vecchio']) : "<i>Nessun valore precedente</i>" ?></td>
                         <td><?= htmlspecialchars($modifica['autore']) ?></td>
                         <td>
-                            <!-- Imposta l'id_modifica come valore della checkbox -->
-                            <input type="checkbox" name="modifica_selezionata[]" value="<?= htmlspecialchars($modifica['id_modifica'] ?? '') ?>">
-                        </td>
+    <!-- Imposta l'id_modifica come valore della checkbox e la checkbox come selezionata di default -->
+    <input type="checkbox" name="modifica_selezionata[]" value="<?= htmlspecialchars($modifica['id_modifica'] ?? '') ?>" checked>
+</td>
+
                     </tr>
                 <?php endforeach; ?>
             </tbody>
