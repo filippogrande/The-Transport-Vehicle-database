@@ -31,7 +31,7 @@ try {
             $check_stmt->bindParam(':id_entita', $id_entita, PDO::PARAM_STR);
             $check_stmt->execute();
             $nazione = $check_stmt->fetch(PDO::FETCH_ASSOC);
-
+            echo "<br>Controllo nazione: " . ($nazione ? "Esiste" : "Non esiste") . valore controllato $campo_modificato con valore $valore_nuovo "<br>";
             // Se la nazione esiste, aggiorna
             if ($nazione) {
                 // Se il campo modificato è "nome", aggiorniamo il nome della nazione
