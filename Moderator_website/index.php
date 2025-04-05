@@ -3,9 +3,7 @@
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
 
-echo "Inizio script...\n";  // Debug: Verifica se il codice arriva qui
 require_once 'Utilities/dbconnect.php';
-echo "Database connesso...\n"; 
 
 function formatMedia($value) {
     if (!$value) {
@@ -33,23 +31,14 @@ function formatMedia($value) {
 }
 
 try {
-    echo "Esegui query...\n";  // Debug: Verifica prima della query
     $query = "SELECT id_gruppo_modifica, tabella_destinazione FROM modifiche_in_sospeso WHERE stato = 'In attesa' ORDER BY data_richiesta ASC LIMIT 1";
     $stmt = $pdo->query($query);
     $first_group = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    // Debug: Mostra il risultato della query
-    echo "Risultato query:\n";
-    var_dump($first_group);
-
     if ($first_group) {
-        echo "C'è un gruppo trovato!\n";  // Debug: Se il gruppo è trovato
-
-        // Esegui la seconda query
         $id_gruppo_modifica = $first_group['id_gruppo_modifica'];
         $tabella_destinazione = $first_group['tabella_destinazione'];
 
-        echo "Esegui seconda query per le modifiche...\n";  // Debug: Verifica esecuzione seconda query
         $query = "
             SELECT id_modifica, campo_modificato, valore_nuovo, valore_vecchio, stato, autore
             FROM modifiche_in_sospeso
@@ -61,21 +50,13 @@ try {
         $stmt->bindParam(':id_gruppo_modifica', $id_gruppo_modifica, PDO::PARAM_INT);
         $stmt->execute();
         $modifiche = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-        // Debug: Mostra le modifiche
-        echo "Modifiche:\n";
-        var_dump($modifiche);
-    } else {
-        echo "Nessun gruppo trovato.\n";  // Debug: Se non ci sono gruppi
     }
 } catch (PDOException $e) {
-    echo "Errore nel database: " . $e->getMessage();  // Debug: Mostra errore
+    echo "Errore nel database: " . $e->getMessage();
     die();
 }
 
 ?>
-
-
 
 <!DOCTYPE html>
 <html lang="it">
