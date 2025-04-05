@@ -2,10 +2,10 @@
 
 require_once 'Utilities/dbconnect.php';
 
-// Ricevi i dati dal form
-$id_gruppo_modifica = $_POST['id_gruppo_modifica'];
-$tabella_destinazione = $_POST['tabella_destinazione'];
-$modifiche_selezionate = $_POST['modifica_selezionata']; // Gli ID delle modifiche selezionate
+// Ricevi i dati dal form tramite GET
+$id_gruppo_modifica = $_GET['id_gruppo_modifica'] ?? null;
+$tabella_destinazione = $_GET['tabella_destinazione'] ?? null;
+$modifiche_selezionate = $_GET['modifica_selezionata'] ?? [];
 
 // Verifica che siano stati inviati i dati
 if (empty($modifiche_selezionate)) {
@@ -13,6 +13,7 @@ if (empty($modifiche_selezionate)) {
     $delete_stmt = $pdo->prepare($delete_query);
     $delete_stmt->bindParam(':id_gruppo_modifica', $id_gruppo_modifica, PDO::PARAM_INT);
     $delete_stmt->execute();
+    echo "Nessuna modifica selezionata. Modifiche eliminate.";
     exit;
 }
 
@@ -23,11 +24,11 @@ try {
     // Switch per la gestione della modifica in base alla tabella destinazione
     switch ($tabella_destinazione) {
         case 'nazioni':
-            include 'gestisci_nazione.php'; // Include il file che gestisce le modifiche per la tabella "nazioni"
+            include 'gestisci_nazione.php';
             break;
 
         case 'tabella_2':
-            include 'gestisci_tabella_2.php'; // Aggiungi il file per la gestione della tabella 2
+            include 'gestisci_tabella_2.php';
             break;
 
         // Aggiungi altri casi per le altre tabelle
@@ -47,7 +48,6 @@ try {
 
     echo "Modifiche applicate correttamente e tutte le modifiche in sospeso sono state rimosse!";
 } catch (Exception $e) {
-    // In caso di errore, facciamo il rollback della transazione
     $pdo->rollBack();
     echo "Errore nell'applicare le modifiche: " . $e->getMessage();
 }
