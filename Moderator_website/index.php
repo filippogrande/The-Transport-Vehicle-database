@@ -119,41 +119,29 @@ try {
 
 <script>
 function submitForm() {
-    // Invia il form
+    // Ottieni i dati del form
     const form = document.getElementById('modificaForm');
-    
-    // Crea l'URL per il reindirizzamento
-    const selected = Array.from(form.querySelectorAll('input[type="checkbox"]:checked'))
-        .map(cb => `modifica_selezionata[]=${encodeURIComponent(cb.value)}`)
-        .join('&');
-
-    const idGruppo = form.querySelector('input[name="id_gruppo_modifica"]').value;
     const tabella = form.querySelector('input[name="tabella_destinazione"]').value;
 
-    const url = `processa_modifica.php?id_gruppo_modifica=${encodeURIComponent(idGruppo)}&tabella_destinazione=${encodeURIComponent(tabella)}&${selected}`;
-    
-    // Ora invia il form senza fare reindirizzamenti nel PHP
-    form.action = url;  // Imposta l'azione del form con l'URL di destinazione
-    form.submit();  // Invia il form
-
-    // Dopo l'invio, gestire il reindirizzamento a seconda della tabella
-    setTimeout(function() {
-        switch (tabella) {
-            case 'nazione':
-                window.location.href = 'gestisci_nazione.php';
-                break;
-            case 'tabella_2':
-                window.location.href = 'gestisci_tabella_2.php';
-                break;
-            // Aggiungi altri casi se necessario
-            default:
-                alert('Tabella non supportata');
-                break;
-        }
-    }, 500);  // Rimozione di delay o personalizzazione
+    // Cambia l'azione del form in base alla tabella e invia il form
+    switch (tabella) {
+        case 'nazione':
+            form.action = 'gestisci_nazione.php';
+            form.method = 'POST';
+            form.submit();
+            break;
+        case 'tabella_2':
+            form.action = 'gestisci_tabella_2.php';
+            form.method = 'POST';
+            form.submit();
+            break;
+        // Aggiungi altri casi se necessario
+        default:
+            alert('Tabella non supportata');
+            break;
+    }
 }
 </script>
-
 
     <?php endif; ?>
 </div> 
