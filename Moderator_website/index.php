@@ -122,9 +122,30 @@ try {
 
 <script>
 function submitForm() {
-    // Ottieni i dati del form
     const form = document.getElementById('modificaForm');
     const tabella = form.querySelector('input[name="tabella_destinazione"]').value;
+
+    // Ottieni gli ID delle modifiche non selezionate (switch su "off")
+    const unchecked = Array.from(form.querySelectorAll('input[type="checkbox"]:not(:checked)'))
+        .map(cb => cb.value);
+
+    if (unchecked.length > 0) {
+        // Invia una richiesta per verificare ed eliminare i file associati alle modifiche non selezionate
+        fetch('verifica_ed_elimina_file.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ modifiche_non_selezionate: unchecked })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                console.log('File associati alle modifiche non selezionate eliminati con successo.');
+            } else {
+                console.error('Errore durante l\'eliminazione dei file:', data.error);
+            }
+        })
+        .catch(error => console.error('Errore nella richiesta:', error));
+    }
 
     // Cambia l'azione del form in base alla tabella e invia il form
     switch (tabella) {
