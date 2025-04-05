@@ -1,14 +1,10 @@
 <?php
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
-
 // Mostra errori
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
 
 require_once 'Utilities/dbconnect.php';
 
-// DEFINIZIONE FUNZIONE formatMedia()
 function formatMedia($value) {
     if (!$value) {
         return "<i>Nessun valore</i>";
@@ -39,6 +35,12 @@ try {
     $stmt = $pdo->query($query);
     $first_group = $stmt->fetch(PDO::FETCH_ASSOC);
 
+    var_dump($first_group); // Aggiungi questo per fare il debug
+    if (!$first_group) {
+        echo 'Nessun gruppo trovato!';
+        die();
+    }
+
     $modifiche = [];
     $tabella_destinazione = "N/D";
 
@@ -59,10 +61,14 @@ try {
         $modifiche = $stmt->fetchAll(PDO::FETCH_ASSOC);
         
     }
+
+    var_dump($modifiche); // Debug dei dati delle modifiche
 } catch (PDOException $e) {
-    die("Errore database: " . $e->getMessage());
+    var_dump($e->getMessage());  // Debug dell'errore di connessione
+    die();
 }
 ?>
+
 
 
 <!DOCTYPE html>
