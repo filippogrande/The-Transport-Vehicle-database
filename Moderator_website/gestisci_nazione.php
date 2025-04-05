@@ -71,7 +71,7 @@ try {
                     continue;
             }
         } else {
-            echo "<p style='color: red;'>Errore: Modifica non valida o tabella destinazione errata. campo: $campo_modificato</p>";
+            echo "<p style='color: red;'>Errore: Modifica non valida o tabella destinazione errata. campo: $modifica</p>";
         }
     }
 
