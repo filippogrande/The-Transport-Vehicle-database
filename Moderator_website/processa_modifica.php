@@ -40,12 +40,6 @@ try {
     // Se tutte le modifiche sono state applicate senza errori, confermiamo la transazione
     $pdo->commit();
 
-    // Elimina tutte le modifiche con lo stesso id_gruppo_modifica
-    $delete_query = "DELETE FROM modifiche_in_sospeso WHERE id_gruppo_modifica = :id_gruppo_modifica";
-    $delete_stmt = $pdo->prepare($delete_query);
-    $delete_stmt->bindParam(':id_gruppo_modifica', $id_gruppo_modifica, PDO::PARAM_INT);
-    $delete_stmt->execute();
-
     echo "Modifiche applicate correttamente e tutte le modifiche in sospeso sono state rimosse!";
 } catch (Exception $e) {
     $pdo->rollBack();
