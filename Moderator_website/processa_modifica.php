@@ -17,6 +17,38 @@ if (empty($modifiche_selezionate)) {
     exit;
 }
 
+echo "<h2>Modifiche selezionate da approvare:</h2>";
+
+echo "<table border='1' cellpadding='5' cellspacing='0'>";
+echo "<thead><tr>
+        <th>ID Modifica</th>
+        <th>Tabella Destinazione</th>
+        <th>Campo Modificato</th>
+        <th>ID Entità</th>
+        <th>Valore Nuovo</th>
+      </tr></thead>";
+echo "<tbody>";
+
+foreach ($modifiche_selezionate as $id_modifica) {
+    $query = "SELECT * FROM modifiche_in_sospeso WHERE id_modifica = :id_modifica";
+    $stmt = $pdo->prepare($query);
+    $stmt->bindParam(':id_modifica', $id_modifica, PDO::PARAM_INT);
+    $stmt->execute();
+    $modifica = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if ($modifica) {
+        echo "<tr>
+                <td>{$modifica['id_modifica']}</td>
+                <td>{$modifica['tabella_destinazione']}</td>
+                <td>{$modifica['campo_modificato']}</td>
+                <td>{$modifica['id_entita']}</td>
+                <td>{$modifica['valore_nuovo']}</td>
+              </tr>";
+    }
+}
+
+echo "</tbody></table><br><hr>";
+
 // Iniziamo la transazione per assicurare che tutte le modifiche vengano applicate atomicamente
 $pdo->beginTransaction();
 
