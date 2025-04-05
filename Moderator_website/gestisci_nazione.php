@@ -40,7 +40,7 @@ try {
         print_r($modifica);
         echo "</pre>";
 
-        if ($modifica && $modifica['tabella_destinazione'] == 'nazioni') {
+        if ($modifica && $modifica['tabella_destinazione'] == 'nazione') {
             $modifiche_valide = true; // Imposta il flag a true
             $id_entita = $modifica['id_entita'];
             $campo_modificato = $modifica['campo_modificato'];
