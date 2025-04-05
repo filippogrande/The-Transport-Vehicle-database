@@ -13,6 +13,39 @@ if (!is_array($modifiche_selezionate)) {
 echo "<h1>Gestione Modifiche Nazione</h1>";
 echo "<p>Numero di modifiche selezionate: " . count($modifiche_selezionate) . "</p>";
 
+if (empty($modifiche_selezionate)) {
+    echo "<p style='color: red;'>Nessuna modifica selezionata. Procedo con l'eliminazione del gruppo di modifiche.</p>";
+
+    // Recupera l'id_gruppo_modifica dalla richiesta
+    $id_gruppo_modifica = $_POST['id_gruppo_modifica'] ?? null;
+
+    if ($id_gruppo_modifica) {
+        eliminaModifiche($id_gruppo_modifica);
+        echo "<p style='color: green;'>Modifiche del gruppo ID $id_gruppo_modifica eliminate con successo.</p>";
+    } else {
+        echo "<p style='color: red;'>Errore: ID gruppo modifica non fornito. Impossibile procedere.</p>";
+    }
+
+    exit; // Interrompi l'esecuzione
+}
+
+function eliminaModifiche($id_gruppo_modifica) {
+    require 'Utilities/dbconnect.php'; // Assicurati che la connessione al database sia disponibile
+
+    try {
+        $query = "DELETE FROM modifiche_in_sospeso WHERE id_gruppo_modifica = :id_gruppo_modifica";
+        $stmt = $pdo->prepare($query);
+        $stmt->bindParam(':id_gruppo_modifica', $id_gruppo_modifica, PDO::PARAM_INT);
+        if ($stmt->execute()) {
+            echo "<p style='color: green;'>Modifiche del gruppo ID $id_gruppo_modifica eliminate con successo.</p>";
+        } else {
+            echo "<p style='color: red;'>Errore durante l'eliminazione delle modifiche del gruppo ID $id_gruppo_modifica.</p>";
+        }
+    } catch (Exception $e) {
+        echo "<p style='color: red;'>Errore durante l'eliminazione delle modifiche: " . $e->getMessage() . "</p>";
+    }
+}
+
 try {
     // Variabili per accumulare i dati delle modifiche
     $nome = null;
@@ -35,16 +68,12 @@ try {
         $stmt->execute();
         $modifica = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        // Debug: Mostra i dati della modifica recuperata
-        echo "<pre>Dati modifica recuperati: ";
-        print_r($modifica);
-        echo "</pre>";
-
         if ($modifica && $modifica['tabella_destinazione'] == 'nazione') {
             $modifiche_valide = true; // Imposta il flag a true
             $id_entita = $modifica['id_entita'];
             $campo_modificato = $modifica['campo_modificato'];
             $valore_nuovo = $modifica['valore_nuovo'];
+            $id_gruppo_modifica = $modifica['id_gruppo_modifica'];
 
             // Accumula i dati delle modifiche nelle variabili
             switch ($campo_modificato) {
@@ -119,6 +148,7 @@ try {
 
             if ($update_stmt->execute()) {
                 echo "<p style='color: green;'>Modifiche applicate con successo alla nazione: $nome.</p>";
+                eliminaModifiche($id_gruppo_modifica);
             } else {
                 echo "<p style='color: red;'>Errore nell'aggiornamento: " . implode(", ", $update_stmt->errorInfo()) . "</p>";
             }
@@ -143,6 +173,7 @@ try {
 
             if ($insert_stmt->execute()) {
                 echo "<p style='color: green;'>Nuova nazione creata con successo: $nome.</p>";
+                eliminaModifiche($id_gruppo_modifica);
             } else {
                 echo "<p style='color: red;'>Errore nell'inserimento: " . implode(", ", $insert_stmt->errorInfo()) . "</p>";
             }
