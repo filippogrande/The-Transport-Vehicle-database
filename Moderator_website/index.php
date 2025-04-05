@@ -54,11 +54,26 @@ try {
         $stmt->bindParam(':id_gruppo_modifica', $id_gruppo_modifica, PDO::PARAM_INT);
         $stmt->execute();
         $modifiche = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        // Reindirizza alla pagina appropriata in base al valore di tabella_destinazione
+        switch ($tabella_destinazione) {
+            case 'nazione':
+                header('Location: gestisci_nazione.php');
+                exit;
+            case 'tabella_2':
+                header('Location: gestisci_tabella_2.php');
+                exit;
+            // Aggiungi altri casi secondo necessità
+            default:
+                echo "Tabella non supportata: $tabella_destinazione";
+                exit;
+        }
     }
 } catch (PDOException $e) {
     die("Errore database: " . $e->getMessage());
 }
 ?>
+
 
 <!DOCTYPE html>
 <html lang="it">
