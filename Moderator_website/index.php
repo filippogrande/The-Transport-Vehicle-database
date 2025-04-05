@@ -31,6 +31,7 @@ function formatMedia($value) {
 
     return htmlspecialchars($value);
 }
+
 try {
     echo "Esegui query...\n";  // Debug: Verifica prima della query
     $query = "SELECT id_gruppo_modifica, tabella_destinazione FROM modifiche_in_sospeso WHERE stato = 'In attesa' ORDER BY data_richiesta ASC LIMIT 1";
