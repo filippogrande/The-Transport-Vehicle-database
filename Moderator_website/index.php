@@ -104,7 +104,10 @@ try {
                         <td><?= $modifica['valore_vecchio'] !== null ? formatMedia($modifica['valore_vecchio']) : "<i>Nessun valore precedente</i>" ?></td>
                         <td><?= htmlspecialchars($modifica['autore']) ?></td>
                         <td>
-                            <input type="checkbox" name="modifica_selezionata[]" value="<?= htmlspecialchars($modifica['id_modifica']) ?>" checked>
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" name="modifica_selezionata[]" value="<?= htmlspecialchars($modifica['id_modifica']) ?>" id="modifica_<?= htmlspecialchars($modifica['id_modifica']) ?>" checked>
+                                <label class="form-check-label" for="modifica_<?= htmlspecialchars($modifica['id_modifica']) ?>"></label>
+                            </div>
                         </td>
                     </tr>
                 <?php endforeach; ?>
