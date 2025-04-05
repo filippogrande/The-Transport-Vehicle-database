@@ -23,7 +23,7 @@ $pdo->beginTransaction();
 try {
     // Switch per la gestione della modifica in base alla tabella destinazione
     switch ($tabella_destinazione) {
-        case 'nazioni':
+        case 'nazione':
             include 'gestisci_nazione.php';
             break;
 
