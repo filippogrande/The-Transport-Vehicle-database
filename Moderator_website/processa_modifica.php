@@ -56,18 +56,20 @@ try {
     // Switch per la gestione della modifica in base alla tabella destinazione
     switch ($tabella_destinazione) {
         case 'nazione':
+            echo "Gestendo nazione...<br>";
             include 'gestisci_nazione.php';
             break;
-
+    
         case 'tabella_2':
+            echo "Gestendo tabella_2...<br>";
             include 'gestisci_tabella_2.php';
             break;
-
-        // Aggiungi altri casi per le altre tabelle
+    
         default:
             echo "Tabella non supportata. tabella_destinazione: $tabella_destinazione";
             exit;
     }
+    
 
     // Se tutte le modifiche sono state applicate senza errori, confermiamo la transazione
     $pdo->commit();
