@@ -54,20 +54,7 @@ try {
         $stmt->bindParam(':id_gruppo_modifica', $id_gruppo_modifica, PDO::PARAM_INT);
         $stmt->execute();
         $modifiche = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-        // Reindirizza alla pagina appropriata in base al valore di tabella_destinazione
-        switch ($tabella_destinazione) {
-            case 'nazione':
-                header('Location: gestisci_nazione.php');
-                exit;
-            case 'tabella_2':
-                header('Location: gestisci_tabella_2.php');
-                exit;
-            // Aggiungi altri casi secondo necessità
-            default:
-                echo "Tabella non supportata: $tabella_destinazione";
-                exit;
-        }
+        
     }
 } catch (PDOException $e) {
     die("Errore database: " . $e->getMessage());
@@ -98,50 +85,48 @@ try {
             </h5>
         </div>
 
-        <form action="processa_modifica.php" method="GET">
-            <input type="hidden" name="id_gruppo_modifica" value="<?= htmlspecialchars($id_gruppo_modifica) ?>">
-            <input type="hidden" name="tabella_destinazione" value="<?= htmlspecialchars($tabella_destinazione) ?>">
+        <form id="modificaForm" action="processa_modifica.php" method="GET">
+    <input type="hidden" name="id_gruppo_modifica" value="<?= htmlspecialchars($id_gruppo_modifica) ?>">
+    <input type="hidden" name="tabella_destinazione" value="<?= htmlspecialchars($tabella_destinazione) ?>">
 
-            <div class="table-responsive">
-                <table class="table table-bordered table-striped align-middle text-center">
-                    <thead class="table-dark">
-                        <tr>
-                            <th>Campo Modificato</th>
-                            <th>Nuovo Valore</th>
-                            <th>Vecchio Valore</th>
-                            <th>Autore</th>
-                            <th>Seleziona</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php foreach ($modifiche as $modifica): ?>
-                            <tr>
-                                <td><?= htmlspecialchars($modifica['campo_modificato']) ?></td>
-                                <td><?= formatMedia($modifica['valore_nuovo']) ?></td>
-                                <td><?= $modifica['valore_vecchio'] !== null ? formatMedia($modifica['valore_vecchio']) : "<i>Nessun valore precedente</i>" ?></td>
-                                <td><?= htmlspecialchars($modifica['autore']) ?></td>
-                                <td>
-                                    <input type="checkbox" name="modifica_selezionata[]" value="<?= htmlspecialchars($modifica['id_modifica']) ?>" checked>
-                                </td>
-                            </tr>
-                        <?php endforeach; ?>
-                    </tbody>
-                </table>
-            </div>
+    <div class="table-responsive">
+        <table class="table table-bordered table-striped align-middle text-center">
+            <thead class="table-dark">
+                <tr>
+                    <th>Campo Modificato</th>
+                    <th>Nuovo Valore</th>
+                    <th>Vecchio Valore</th>
+                    <th>Autore</th>
+                    <th>Seleziona</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php foreach ($modifiche as $modifica): ?>
+                    <tr>
+                        <td><?= htmlspecialchars($modifica['campo_modificato']) ?></td>
+                        <td><?= formatMedia($modifica['valore_nuovo']) ?></td>
+                        <td><?= $modifica['valore_vecchio'] !== null ? formatMedia($modifica['valore_vecchio']) : "<i>Nessun valore precedente</i>" ?></td>
+                        <td><?= htmlspecialchars($modifica['autore']) ?></td>
+                        <td>
+                            <input type="checkbox" name="modifica_selezionata[]" value="<?= htmlspecialchars($modifica['id_modifica']) ?>" checked>
+                        </td>
+                    </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
+    </div>
 
-            <div class="d-flex justify-content-start gap-3 mt-3">
-                <button type="submit" class="btn btn-primary">Invia Modifiche</button>
-                <button type="button" onclick="mostraUrl()" class="btn btn-outline-secondary">Apri in nuova scheda</button>
-            </div>
-        </form>
-    <?php endif; ?>
-</div>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <div class="d-flex justify-content-start gap-3 mt-3">
+        <button type="button" class="btn btn-primary" onclick="submitForm()">Invia Modifiche</button>
+    </div>
+</form>
 
 <script>
-function mostraUrl() {
-    const form = document.querySelector("form");
+function submitForm() {
+    // Invia il form
+    const form = document.getElementById('modificaForm');
+    
+    // Crea l'URL per il reindirizzamento
     const selected = Array.from(form.querySelectorAll('input[type="checkbox"]:checked'))
         .map(cb => `modifica_selezionata[]=${encodeURIComponent(cb.value)}`)
         .join('&');
@@ -150,10 +135,30 @@ function mostraUrl() {
     const tabella = form.querySelector('input[name="tabella_destinazione"]').value;
 
     const url = `processa_modifica.php?id_gruppo_modifica=${encodeURIComponent(idGruppo)}&tabella_destinazione=${encodeURIComponent(tabella)}&${selected}`;
+    
+    // Ora invia il form senza fare reindirizzamenti nel PHP
+    form.action = url;  // Imposta l'azione del form con l'URL di destinazione
+    form.submit();  // Invia il form
 
-    window.open(url, "_blank");
+    // Dopo l'invio, gestire il reindirizzamento a seconda della tabella
+    setTimeout(function() {
+        switch (tabella) {
+            case 'nazione':
+                window.location.href = 'gestisci_nazione.php';
+                break;
+            case 'tabella_2':
+                window.location.href = 'gestisci_tabella_2.php';
+                break;
+            // Aggiungi altri casi se necessario
+            default:
+                alert('Tabella non supportata');
+                break;
+        }
+    }, 500);  // Rimozione di delay o personalizzazione
 }
 </script>
+
+
 
 </body>
 </html>
