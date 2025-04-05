@@ -25,6 +25,11 @@ try {
         $stmt->execute();
         $modifica = $stmt->fetch(PDO::FETCH_ASSOC);
 
+        // Debug: Mostra i dati della modifica recuperata
+        echo "<pre>Dati modifica recuperati: ";
+        print_r($modifica);
+        echo "</pre>";
+
         if ($modifica && $modifica['tabella_destinazione'] == 'nazioni') {
             $id_entita = $modifica['id_entita'];
             $campo_modificato = $modifica['campo_modificato'];
