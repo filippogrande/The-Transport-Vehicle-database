@@ -82,8 +82,8 @@ include 'header.html'; // Includi il file header.php
                             <?php endif; ?>
                         </td>
                         <td>
-                            <a href="modifica_nazione.php?nome=<?php echo urlencode($nazione['nome'] ?? ''); ?>" class="btn btn-warning btn-sm">
-                                <i class="fas fa-edit"></i>
+                            <a href="/modifiche/modifica_nazione.php?nome=<?php echo urlencode($nazione['nome'] ?? ''); ?>" class="btn btn-warning btn-sm">
+                                <i class="fas fa-pencil-alt"></i> <!-- Icona matita -->
                             </a>
                         </td>
                     </tr>
