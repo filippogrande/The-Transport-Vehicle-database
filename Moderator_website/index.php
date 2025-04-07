@@ -11,7 +11,7 @@ function formatMedia($value) {
     }
 
     $value = trim($value);
-    $image_extensions = ['jpg', 'jpeg', 'png', 'gif'];
+    $image_extensions = ['jpg', 'jpeg', 'png', 'gif', 'webp']; // Aggiunto 'webp'
     $video_extensions = ['mp4', 'webm', 'ogg'];
     $ext = strtolower(pathinfo($value, PATHINFO_EXTENSION));
 
