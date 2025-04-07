@@ -35,11 +35,11 @@ try {
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // Ottieni i dati inviati dal form
-    $nome = trim($_POST['nome']);
-    $codice_iso = isset($_POST['codice_iso']) ? trim($_POST['codice_iso']) : null;
-    $codice_iso2 = isset($_POST['codice_iso2']) ? trim($_POST['codice_iso2']) : null;
-    $continente = isset($_POST['continente']) ? trim($_POST['continente']) : null;
-    $capitale = isset($_POST['capitale']) ? trim($_POST['capitale']) : null;
+    $nome = trim($_POST['nome'] ?? '');
+    $codice_iso = trim($_POST['codice_iso'] ?? '');
+    $codice_iso2 = trim($_POST['codice_iso2'] ?? '');
+    $continente = trim($_POST['continente'] ?? '');
+    $capitale = trim($_POST['capitale'] ?? '');
 
     // Creazione della cartella per l'immagine
     $cartella = "../Photo/nazione/" . strtolower(str_replace(' ', '_', $nome)) . "/";
@@ -56,7 +56,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         // Controlla se il file è un'immagine
         $estensione = strtolower(pathinfo($percorso_destinazione, PATHINFO_EXTENSION));
-        $tipi_consentiti = ['jpg', 'jpeg', 'png', 'gif', 'webp']; // Aggiunto 'webp'
+        $tipi_consentiti = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
 
         if (!in_array($estensione, $tipi_consentiti)) {
             die("Errore: Formato file non valido. Sono ammessi solo JPG, PNG, GIF, WebP.");
@@ -69,71 +69,32 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             die("Errore nel caricamento del file. Verifica i permessi della directory.");
         }
     } else {
-        $bandiera_url = $nazione['bandiera']; // Mantieni l'immagine attuale se non viene caricata una nuova
+        $bandiera_url = $nazione['bandiera'] ?? null; // Mantieni l'immagine attuale se non viene caricata una nuova
     }
 
     // ID gruppo modifica per tracciabilità
     $id_gruppo_modifica = rand(1000, 9999);
 
-    // Inseriamo i dati nella tabella `modifiche_in_sospeso` solo se i valori sono cambiati
+    // Inseriamo i dati nella tabella `modifiche_in_sospeso` per tutti i campi
     try {
-        if ($nome !== $nazione['nome']) {
-            $query = "INSERT INTO modifiche_in_sospeso (id_gruppo_modifica, tabella_destinazione, campo_modificato, valore_nuovo, valore_vecchio, stato, autore) 
-                      VALUES (:id_gruppo_modifica, 'nazione', 'nome', :nome, :valore_vecchio_nome, 'In attesa', 'admin')";
-            $stmt = $pdo->prepare($query);
-            $stmt->bindParam(':id_gruppo_modifica', $id_gruppo_modifica);
-            $stmt->bindParam(':nome', $nome);
-            $stmt->bindParam(':valore_vecchio_nome', $nazione['nome']);
-            $stmt->execute();
-        }
+        $query = "INSERT INTO modifiche_in_sospeso (id_gruppo_modifica, tabella_destinazione, campo_modificato, valore_nuovo, valore_vecchio, stato, autore) 
+                  VALUES (:id_gruppo_modifica, 'nazione', :campo_modificato, :valore_nuovo, :valore_vecchio, 'In attesa', 'admin')";
+        $stmt = $pdo->prepare($query);
 
-        if (!empty($codice_iso) && $codice_iso !== $nazione['codice_iso']) {
-            $query = "INSERT INTO modifiche_in_sospeso (id_gruppo_modifica, tabella_destinazione, campo_modificato, valore_nuovo, valore_vecchio, stato, autore) 
-                      VALUES (:id_gruppo_modifica, 'nazione', 'codice_iso', :codice_iso, :valore_vecchio_codice_iso, 'In attesa', 'admin')";
-            $stmt = $pdo->prepare($query);
-            $stmt->bindParam(':id_gruppo_modifica', $id_gruppo_modifica);
-            $stmt->bindParam(':codice_iso', $codice_iso);
-            $stmt->bindParam(':valore_vecchio_codice_iso', $nazione['codice_iso']);
-            $stmt->execute();
-        }
+        $campi = [
+            'nome' => [$nome, $nazione['nome'] ?? null],
+            'codice_iso' => [$codice_iso, $nazione['codice_iso'] ?? null],
+            'codice_iso2' => [$codice_iso2, $nazione['codice_iso2'] ?? null],
+            'continente' => [$continente, $nazione['continente'] ?? null],
+            'capitale' => [$capitale, $nazione['capitale'] ?? null],
+            'bandiera' => [$bandiera_url, $nazione['bandiera'] ?? null],
+        ];
 
-        if (!empty($codice_iso2) && $codice_iso2 !== $nazione['codice_iso2']) {
-            $query = "INSERT INTO modifiche_in_sospeso (id_gruppo_modifica, tabella_destinazione, campo_modificato, valore_nuovo, valore_vecchio, stato, autore) 
-                      VALUES (:id_gruppo_modifica, 'nazione', 'codice_iso2', :codice_iso2, :valore_vecchio_codice_iso2, 'In attesa', 'admin')";
-            $stmt = $pdo->prepare($query);
+        foreach ($campi as $campo => [$valore_nuovo, $valore_vecchio]) {
             $stmt->bindParam(':id_gruppo_modifica', $id_gruppo_modifica);
-            $stmt->bindParam(':codice_iso2', $codice_iso2);
-            $stmt->bindParam(':valore_vecchio_codice_iso2', $nazione['codice_iso2']);
-            $stmt->execute();
-        }
-
-        if (!empty($continente) && $continente !== $nazione['continente']) {
-            $query = "INSERT INTO modifiche_in_sospeso (id_gruppo_modifica, tabella_destinazione, campo_modificato, valore_nuovo, valore_vecchio, stato, autore) 
-                      VALUES (:id_gruppo_modifica, 'nazione', 'continente', :continente, :valore_vecchio_continente, 'In attesa', 'admin')";
-            $stmt = $pdo->prepare($query);
-            $stmt->bindParam(':id_gruppo_modifica', $id_gruppo_modifica);
-            $stmt->bindParam(':continente', $continente);
-            $stmt->bindParam(':valore_vecchio_continente', $nazione['continente']);
-            $stmt->execute();
-        }
-
-        if (!empty($capitale) && $capitale !== $nazione['capitale']) {
-            $query = "INSERT INTO modifiche_in_sospeso (id_gruppo_modifica, tabella_destinazione, campo_modificato, valore_nuovo, valore_vecchio, stato, autore) 
-                      VALUES (:id_gruppo_modifica, 'nazione', 'capitale', :capitale, :valore_vecchio_capitale, 'In attesa', 'admin')";
-            $stmt = $pdo->prepare($query);
-            $stmt->bindParam(':id_gruppo_modifica', $id_gruppo_modifica);
-            $stmt->bindParam(':capitale', $capitale);
-            $stmt->bindParam(':valore_vecchio_capitale', $nazione['capitale']);
-            $stmt->execute();
-        }
-
-        if (!empty($bandiera_url) && $bandiera_url !== $nazione['bandiera']) {
-            $query = "INSERT INTO modifiche_in_sospeso (id_gruppo_modifica, tabella_destinazione, campo_modificato, valore_nuovo, valore_vecchio, stato, autore) 
-                      VALUES (:id_gruppo_modifica, 'nazione', 'bandiera', :bandiera, :valore_vecchio_bandiera, 'In attesa', 'admin')";
-            $stmt = $pdo->prepare($query);
-            $stmt->bindParam(':id_gruppo_modifica', $id_gruppo_modifica);
-            $stmt->bindParam(':bandiera', $bandiera_url);
-            $stmt->bindParam(':valore_vecchio_bandiera', $nazione['bandiera']);
+            $stmt->bindParam(':campo_modificato', $campo);
+            $stmt->bindParam(':valore_nuovo', $valore_nuovo);
+            $stmt->bindParam(':valore_vecchio', $valore_vecchio);
             $stmt->execute();
         }
 
