@@ -198,7 +198,7 @@ include '../header.html'; // Include l'header
             <?php endif; ?>
         </div>
         <button type="submit" class="btn btn-primary">Proponi Modifiche</button>
-        <a href="../azienda_costruttrice.php?id=<?= urlencode($id_azienda) ?>" class="btn btn-secondary">Annulla</a>
+        <a href="../azienda_costruttrice.php?id=<?= urlencode($id_azienda) ?>" class="btn btn-secondary">Torna alla azienda costruttrice</a>
     </form>
 </body>
 </html>

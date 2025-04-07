@@ -132,7 +132,7 @@ CREATE TABLE modifiche_in_sospeso (
     tabella_destinazione VARCHAR(50) NOT NULL, -- Nome della tabella modificata
     id_entita TEXT NULL, -- ID dell'entità da modificare
     campo_modificato VARCHAR(50) NOT NULL, -- Nome del campo modificato
-    valore_nuovo TEXT NOT NULL, -- Nuovo valore proposto
+    valore_nuovo TEXT, -- Nuovo valore proposto
     valore_vecchio TEXT NULL, -- Valore attuale (per riferimento)
     stato stato_modifica_enum DEFAULT 'In attesa',
     autore VARCHAR(255), -- Utente che ha fatto la richiesta
