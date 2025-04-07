@@ -98,6 +98,7 @@ try {
                             <th>Nuovo Valore</th>
                             <th>Vecchio Valore</th>
                             <th>Autore</th>
+                            <th>Feedback</th> <!-- Nuova colonna -->
                             <th>Seleziona</th>
                         </tr>
                     </thead>
@@ -112,6 +113,7 @@ try {
                                 <td><?= formatMedia($modifica['valore_nuovo']) ?></td>
                                 <td><?= $modifica['valore_vecchio'] !== null ? formatMedia($modifica['valore_vecchio']) : "<i>Nessun valore precedente</i>" ?></td>
                                 <td><?= htmlspecialchars($modifica['autore']) ?></td>
+                                <td><?= $is_same_value ? 'Uguale' : 'Diverso' ?></td> <!-- Feedback -->
                                 <td>
                                     <div class="form-check form-switch">
                                         <input class="form-check-input" type="checkbox" name="modifica_selezionata[]" value="<?= htmlspecialchars($modifica['id_modifica']) ?>" id="modifica_<?= htmlspecialchars($modifica['id_modifica']) ?>" checked>
