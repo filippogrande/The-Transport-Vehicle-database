@@ -147,7 +147,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     </div>
     <button type="submit" class="btn btn-primary">Proponi Nazione</button>
     <!-- Bottone per andare alla pagina Nazioni -->
-    <a href="../nazioni.php" class="btn btn-secondary">Vai alle Nazioni</a>
+    <a href="../nazioni.php" class="btn btn-secondary">Torna alle Nazioni</a>
 </form>
 
 </body>

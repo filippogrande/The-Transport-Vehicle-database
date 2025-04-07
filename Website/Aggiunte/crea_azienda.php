@@ -11,6 +11,15 @@ if (!$pdo) {
     die("Errore nella connessione al database.");
 }
 
+// Recupera le nazioni dal database
+$nazioni = [];
+try {
+    $stmt = $pdo->query("SELECT nome FROM nazione");
+    $nazioni = $stmt->fetchAll(PDO::FETCH_ASSOC);
+} catch (PDOException $e) {
+    die("Errore nel recupero delle nazioni: " . $e->getMessage());
+}
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // Ottieni i dati inviati dal form
     $nome = trim($_POST['nome']);
@@ -159,7 +168,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         </div>
         <div class="mb-3">
             <label for="long_desc" class="form-label">Descrizione Lunga</label>
-            <textarea class="form-control" id="long_desc" name="long_desc"></textarea>
+            <textarea class="form-control" id="long_desc" name="long_desc" rows="5" style="resize: vertical;"></textarea>
         </div>
         <div class="mb-3">
             <label for="fondazione" class="form-label">Data di Fondazione</label>
@@ -175,7 +184,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         </div>
         <div class="mb-3">
             <label for="nazione" class="form-label">Nazione</label>
-            <input type="text" class="form-control" id="nazione" name="nazione">
+            <select class="form-control" id="nazione" name="nazione">
+                <?php foreach ($nazioni as $nazione): ?>
+                    <option value="<?= htmlspecialchars($nazione['nome']) ?>"><?= htmlspecialchars($nazione['nome']) ?></option>
+                <?php endforeach; ?>
+            </select>
         </div>
         <div class="mb-3">
             <label for="sito_web" class="form-label">Sito Web</label>
@@ -193,7 +206,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <input type="file" class="form-control" id="logo" name="logo" accept="image/*">
         </div>
         <button type="submit" class="btn btn-primary">Proponi Azienda</button>
-        <a href="../aziende.php" class="btn btn-secondary">Vai alle Aziende</a>
+        <a href="../aziende_costruttrici.php" class="btn btn-secondary">Torna alle Aziende</a>
     </form>
 </body>
 </html>
