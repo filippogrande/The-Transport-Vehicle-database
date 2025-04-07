@@ -57,16 +57,10 @@ include 'header.html'; // Includi il file header.php
                 <tr>
                     <th>Nome</th>
                     <th>Descrizione Breve</th>
-                    <th>Descrizione Lunga</th>
-                    <th>Fondazione</th>
-                    <th>Chiusura</th>
-                    <th>Sede</th>
                     <th>Nazione</th>
                     <th>Sito Web</th>
                     <th>Stato</th>
                     <th>Logo</th>
-                    <th>Successore</th>
-                    <th>Azioni</th>
                 </tr>
             </thead>
             <tbody>
@@ -74,10 +68,6 @@ include 'header.html'; // Includi il file header.php
                     <tr>
                         <td><?php echo htmlspecialchars($azienda['nome'] ?? ''); ?></td>
                         <td><?php echo htmlspecialchars($azienda['short_desc'] ?? ''); ?></td>
-                        <td><?php echo htmlspecialchars($azienda['long_desc'] ?? ''); ?></td>
-                        <td><?php echo htmlspecialchars($azienda['fondazione'] ?? ''); ?></td>
-                        <td><?php echo htmlspecialchars($azienda['chiusura'] ?? ''); ?></td>
-                        <td><?php echo htmlspecialchars($azienda['sede'] ?? ''); ?></td>
                         <td><?php echo htmlspecialchars($azienda['nazione'] ?? ''); ?></td>
                         <td>
                             <?php if (!empty($azienda['sito_web'])): ?>
@@ -93,26 +83,6 @@ include 'header.html'; // Includi il file header.php
                             <?php else: ?>
                                 <span>Nessun logo</span>
                             <?php endif; ?>
-                        </td>
-                        <td>
-                            <?php if (!empty($azienda['id_successore'])): ?>
-                                <?php
-                                // Recupera il nome del successore
-                                $successore_query = "SELECT nome FROM azienda_costruttrice WHERE id_azienda = :id_successore";
-                                $successore_stmt = $pdo->prepare($successore_query);
-                                $successore_stmt->bindParam(':id_successore', $azienda['id_successore'], PDO::PARAM_INT);
-                                $successore_stmt->execute();
-                                $successore = $successore_stmt->fetch(PDO::FETCH_ASSOC);
-                                echo htmlspecialchars($successore['nome'] ?? 'N/A');
-                                ?>
-                            <?php else: ?>
-                                <span>Nessun successore</span>
-                            <?php endif; ?>
-                        </td>
-                        <td>
-                            <a href="/modifiche/modifica_azienda.php?id=<?php echo urlencode($azienda['id_azienda'] ?? ''); ?>" class="btn btn-warning btn-sm d-flex align-items-center justify-content-center" style="width: 40px; height: 40px; font-size: 16px;">
-                                <i class="fas fa-pencil-alt"></i> <!-- Solo icona matita -->
-                            </a>
                         </td>
                     </tr>
                 <?php endforeach; ?>
