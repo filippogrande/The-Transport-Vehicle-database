@@ -26,6 +26,11 @@ if (empty($modifiche_selezionate)) {
         echo "<p style='color: red;'>Errore: ID gruppo modifica non fornito. Impossibile procedere.</p>";
     }
 
+    // Aggiungi il pulsante "Torna alla Home"
+    echo '<div class="mt-4">';
+    echo '<a href="index.php" class="btn btn-primary">Torna alla Home</a>';
+    echo '</div>';
+
     exit; // Interrompi l'esecuzione
 }
 

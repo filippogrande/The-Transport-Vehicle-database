@@ -69,20 +69,20 @@ include 'header.html'; // Includi il file header.php
             <tbody>
                 <?php foreach ($nazioni as $nazione): ?>
                     <tr>
-                        <td><?php echo htmlspecialchars($nazione['nome']); ?></td>
-                        <td><?php echo htmlspecialchars($nazione['codice_iso']); ?></td>
-                        <td><?php echo htmlspecialchars($nazione['codice_iso2']); ?></td>
-                        <td><?php echo htmlspecialchars($nazione['continente']); ?></td>
-                        <td><?php echo htmlspecialchars($nazione['capitale']); ?></td>
+                        <td><?php echo htmlspecialchars($nazione['nome'] ?? ''); ?></td>
+                        <td><?php echo htmlspecialchars($nazione['codice_iso'] ?? ''); ?></td>
+                        <td><?php echo htmlspecialchars($nazione['codice_iso2'] ?? ''); ?></td>
+                        <td><?php echo htmlspecialchars($nazione['continente'] ?? ''); ?></td>
+                        <td><?php echo htmlspecialchars($nazione['capitale'] ?? ''); ?></td>
                         <td>
                             <?php if (!empty($nazione['bandiera'])): ?>
-                                <img src="<?php echo htmlspecialchars($nazione['bandiera']); ?>" alt="Bandiera di <?php echo htmlspecialchars($nazione['nome']); ?>" style="max-width: 100px; max-height: 50px;">
+                                <img src="<?php echo htmlspecialchars($nazione['bandiera']); ?>" alt="Bandiera di <?php echo htmlspecialchars($nazione['nome'] ?? ''); ?>" style="max-width: 100px; max-height: 50px;">
                             <?php else: ?>
                                 <span>Nessuna bandiera</span>
                             <?php endif; ?>
                         </td>
                         <td>
-                            <a href="modifica_nazione.php?nome=<?php echo urlencode($nazione['nome']); ?>" class="btn btn-warning btn-sm">
+                            <a href="modifica_nazione.php?nome=<?php echo urlencode($nazione['nome'] ?? ''); ?>" class="btn btn-warning btn-sm">
                                 <i class="fas fa-edit"></i>
                             </a>
                         </td>
