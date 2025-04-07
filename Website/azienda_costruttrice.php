@@ -18,6 +18,9 @@ if ($id_azienda) {
 }
 ?>
 
+<!-- Importa la libreria Font Awesome per le icone -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+
 <div class="container">
     <?php if (!empty($azienda)): ?>
         <?php if (!empty($azienda['logo'])): ?>
@@ -27,7 +30,14 @@ if ($id_azienda) {
                 </a>
             </div>
         <?php endif; ?>
-        <h1><?php echo htmlspecialchars($azienda['nome']); ?></h1>
+        <div style="display: flex; align-items: center; justify-content: space-between;">
+            <h1><?php echo htmlspecialchars($azienda['nome']); ?></h1>
+            <a href="/modifiche/modifica_azienda_costruttrice.php?id=<?php echo urlencode($azienda['id_azienda']); ?>" 
+               class="btn btn-warning btn-sm d-flex align-items-center justify-content-center" 
+               style="width: 40px; height: 40px; font-size: 16px;">
+                <i class="fas fa-pencil-alt"></i> <!-- Icona matita -->
+            </a>
+        </div>
         <p><strong>Descrizione breve:</strong> <?php echo htmlspecialchars($azienda['short_desc']); ?></p>
         <p><strong>Descrizione lunga:</strong> <?php echo nl2br(htmlspecialchars($azienda['long_desc'])); ?></p>
         <p><strong>Fondazione:</strong> <?php echo htmlspecialchars($azienda['fondazione']); ?></p>
