@@ -66,8 +66,8 @@ try {
     <title>Modifiche in sospeso</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        .same-value {
-            background-color: #d4edda; /* Verde chiaro */
+        table tr.same-value {
+            background-color: #d4edda !important; /* Verde chiaro con maggiore specificità */
         }
     </style>
 </head>
