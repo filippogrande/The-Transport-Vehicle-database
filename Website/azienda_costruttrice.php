@@ -20,6 +20,13 @@ if ($id_azienda) {
 
 <div class="container">
     <?php if (!empty($azienda)): ?>
+        <?php if (!empty($azienda['logo'])): ?>
+            <div style="text-align: center; margin-bottom: 20px;">
+                <a href="<?php echo htmlspecialchars($azienda['logo']); ?>" target="_blank">
+                    <img src="<?php echo htmlspecialchars($azienda['logo']); ?>" alt="Logo di <?php echo htmlspecialchars($azienda['nome']); ?>" style="max-width: 200px; height: auto;" />
+                </a>
+            </div>
+        <?php endif; ?>
         <h1><?php echo htmlspecialchars($azienda['nome']); ?></h1>
         <p><strong>Descrizione breve:</strong> <?php echo htmlspecialchars($azienda['short_desc']); ?></p>
         <p><strong>Descrizione lunga:</strong> <?php echo nl2br(htmlspecialchars($azienda['long_desc'])); ?></p>
@@ -29,10 +36,6 @@ if ($id_azienda) {
         <p><strong>Nazione:</strong> <?php echo htmlspecialchars($azienda['nazione']); ?></p>
         <p><strong>Sito Web:</strong> <a href="<?php echo htmlspecialchars($azienda['sito_web']); ?>" target="_blank"><?php echo htmlspecialchars($azienda['sito_web']); ?></a></p>
         <p><strong>Stato:</strong> <?php echo htmlspecialchars($azienda['stato']); ?></p>
-        <?php if (!empty($azienda['logo'])): ?>
-            <p><strong>Logo:</strong></p>
-            <img src="data:image/jpeg;base64,<?php echo base64_encode($azienda['logo']); ?>" alt="Logo di <?php echo htmlspecialchars($azienda['nome']); ?>" />
-        <?php endif; ?>
         <?php if (!empty($azienda['id_successore'])): ?>
             <p><strong>Successore:</strong> 
                 <a href="azienda_costruttrice.php?id=<?php echo urlencode($azienda['id_successore']); ?>">
