@@ -69,6 +69,10 @@ try {
         table tr.same-value {
             background-color: #d4edda !important; /* Verde chiaro con maggiore specificità */
         }
+        /* Forza lo stile per le righe con valori uguali */
+        .table tbody tr.same-value {
+            background-color: #d4edda !important; /* Verde chiaro */
+        }
     </style>
 </head>
 <body class="bg-light">
