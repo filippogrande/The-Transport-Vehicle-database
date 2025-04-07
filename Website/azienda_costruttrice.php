@@ -1,5 +1,9 @@
 <?php
-require_once 'db_connection.php'; // Connessione al database
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
+require_once 'Utilities/dbconnect.php'; // Connessione al database corretta
 include 'header.html'; // Include l'header
 
 $id_azienda = $_GET['id'] ?? null;
