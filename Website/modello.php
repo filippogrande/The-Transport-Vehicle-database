@@ -19,6 +19,9 @@ if ($id_modello) {
 ?>
 
 <div class="container">
+    <div class="mt-4 d-flex justify-content-end">
+        <a href="/Aggiunte/crea_modello.php" class="btn btn-primary">Crea Nuovo Modello</a>
+    </div>
     <?php if (!empty($modello)): ?>
         <h1><?php echo htmlspecialchars($modello['nome']); ?></h1>
         <p><strong>Tipo:</strong> <?php echo htmlspecialchars($modello['tipo'] ?? 'N/A'); ?></p>
