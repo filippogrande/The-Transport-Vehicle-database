@@ -130,11 +130,23 @@ try {
             echo "<p>Nazione trovata: {$nazione['nome']}</p>";
 
             // Mantieni i valori esistenti se non sono stati modificati
-            $codice_iso = $codice_iso ?? $nazione['codice_iso'];
-            $codice_iso2 = $codice_iso2 ?? $nazione['codice_iso2'];
-            $continente = $continente ?? $nazione['continente'];
-            $capitale = $capitale ?? $nazione['capitale'];
-            $bandiera = $bandiera ?? $nazione['bandiera'];
+            switch (true) {
+                case $codice_iso === null:
+                    $codice_iso = $nazione['codice_iso'];
+                    break;
+                case $codice_iso2 === null:
+                    $codice_iso2 = $nazione['codice_iso2'];
+                    break;
+                case $continente === null:
+                    $continente = $nazione['continente'];
+                    break;
+                case $capitale === null:
+                    $capitale = $nazione['capitale'];
+                    break;
+                case $bandiera === null:
+                    $bandiera = $nazione['bandiera'];
+                    break;
+            }
 
             // Aggiorna i dati della nazione
             $update_query = "

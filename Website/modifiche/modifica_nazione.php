@@ -145,7 +145,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <?php endif; ?>
         </div>
         <button type="submit" class="btn btn-primary">Proponi Modifiche</button>
-        <a href="../nazioni.php" class="btn btn-secondary">Annulla</a>
+        <a href="../nazioni.php" class="btn btn-secondary">Torna a nazione</a>
     </form>
 </body>
 </html>
