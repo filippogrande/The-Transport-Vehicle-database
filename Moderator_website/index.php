@@ -103,7 +103,11 @@ try {
                     </thead>
                     <tbody>
                         <?php foreach ($modifiche as $modifica): ?>
-                            <tr class="<?= $modifica['valore_nuovo'] === $modifica['valore_vecchio'] ? 'same-value' : '' ?>">
+                            <?php
+                            // Confronto dei valori considerando possibili tipi diversi
+                            $is_same_value = trim((string)$modifica['valore_nuovo']) === trim((string)$modifica['valore_vecchio']);
+                            ?>
+                            <tr class="<?= $is_same_value ? 'same-value' : '' ?>">
                                 <td><?= htmlspecialchars($modifica['campo_modificato']) ?></td>
                                 <td><?= formatMedia($modifica['valore_nuovo']) ?></td>
                                 <td><?= $modifica['valore_vecchio'] !== null ? formatMedia($modifica['valore_vecchio']) : "<i>Nessun valore precedente</i>" ?></td>

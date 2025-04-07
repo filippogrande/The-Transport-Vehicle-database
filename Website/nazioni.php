@@ -41,16 +41,16 @@ try {
 }
 
 include 'header.html'; // Includi il file header.php
+?>
 
 <!-- Aggiungi il collegamento a Font Awesome -->
- <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
-?>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+<!-- Fine del collegamento a Font Awesome -->
 
 <!-- Visualizzazione del messaggio (se presente) e della tabella -->
 <div class="container mt-4">
     <h1 class="mb-3">Nazioni</h1>
     <a href="Aggiunte/crea_nazione.php" class="btn btn-primary mb-3 ms-auto d-block" style="width: auto;">Crea Nuova Nazione</a>
-
 
     <?php if ($nazioni_messaggio): ?>
         <div class="alert alert-warning"><?php echo $nazioni_messaggio; ?></div>
