@@ -35,8 +35,7 @@ CREATE TABLE azienda_costruttrice (
 
 CREATE TABLE modello (
     id_modello SERIAL PRIMARY KEY,
-    nome VARCHAR(255) NOT NULL,
-    id_azienda INT NOT NULL,  
+    nome VARCHAR(255) NOT NULL
     tipo tipo_modello_enum ,
     anno_inizio_produzione DATE,
     anno_fine_produzione DATE NULL,
@@ -49,7 +48,6 @@ CREATE TABLE modello (
     velocita_massima DECIMAL(5,2),
     descrizione TEXT,
     totale_veicoli INT DEFAULT 0, -- Numero totale di veicoli prodotti
-    FOREIGN KEY (id_azienda) REFERENCES azienda_costruttrice(id_azienda) ON DELETE CASCADE
 );
 
 CREATE TABLE variante_modello (
@@ -141,4 +139,20 @@ CREATE TABLE modifiche_in_sospeso (
     data_richiesta TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+CREATE TABLE modello_azienda (
+    id_modello INT NOT NULL,
+    id_azienda INT NOT NULL,
+    ruolo VARCHAR(100), -- ad esempio: "Produttore principale", "Collaboratore", "Su licenza", ecc.
+    PRIMARY KEY (id_modello, id_azienda),
+    FOREIGN KEY (id_modello) REFERENCES modello(id_modello) ON DELETE CASCADE,
+    FOREIGN KEY (id_azienda) REFERENCES azienda_costruttrice(id_azienda) ON DELETE CASCADE
+);
 
+CREATE TABLE veicolo_azienda_produttrice (
+    id_veicolo INT NOT NULL,
+    id_azienda INT NOT NULL,
+    ruolo VARCHAR(100), -- ad esempio: "Costruttore", "Assemblatore", "Restauratore"
+    PRIMARY KEY (id_veicolo, id_azienda),
+    FOREIGN KEY (id_veicolo) REFERENCES veicolo(id_veicolo) ON DELETE CASCADE,
+    FOREIGN KEY (id_azienda) REFERENCES azienda_costruttrice(id_azienda) ON DELETE CASCADE
+);

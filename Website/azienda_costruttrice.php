@@ -38,14 +38,20 @@ if ($id_azienda) {
                 <i class="fas fa-pencil-alt"></i> <!-- Icona matita -->
             </a>
         </div>
-        <p><strong>Descrizione breve:</strong> <?php echo htmlspecialchars($azienda['short_desc']); ?></p>
-        <p><strong>Descrizione lunga:</strong> <?php echo nl2br(htmlspecialchars($azienda['long_desc'])); ?></p>
-        <p><strong>Fondazione:</strong> <?php echo htmlspecialchars($azienda['fondazione']); ?></p>
+        <p><strong>Descrizione breve:</strong> <?php echo htmlspecialchars($azienda['short_desc'] ?? 'N/A'); ?></p>
+        <p><strong>Descrizione lunga:</strong> <?php echo nl2br(htmlspecialchars($azienda['long_desc'] ?? 'N/A')); ?></p>
+        <p><strong>Fondazione:</strong> <?php echo htmlspecialchars($azienda['fondazione'] ?? 'N/A'); ?></p>
         <p><strong>Chiusura:</strong> <?php echo htmlspecialchars($azienda['chiusura'] ?? 'N/A'); ?></p>
-        <p><strong>Sede:</strong> <?php echo htmlspecialchars($azienda['sede']); ?></p>
-        <p><strong>Nazione:</strong> <?php echo htmlspecialchars($azienda['nazione']); ?></p>
-        <p><strong>Sito Web:</strong> <a href="<?php echo htmlspecialchars($azienda['sito_web']); ?>" target="_blank"><?php echo htmlspecialchars($azienda['sito_web']); ?></a></p>
-        <p><strong>Stato:</strong> <?php echo htmlspecialchars($azienda['stato']); ?></p>
+        <p><strong>Sede:</strong> <?php echo htmlspecialchars($azienda['sede'] ?? 'N/A'); ?></p>
+        <p><strong>Nazione:</strong> <?php echo htmlspecialchars($azienda['nazione'] ?? 'N/A'); ?></p>
+        <p><strong>Sito Web:</strong> 
+            <?php if (!empty($azienda['sito_web'])): ?>
+                <a href="<?php echo htmlspecialchars($azienda['sito_web']); ?>" target="_blank"><?php echo htmlspecialchars($azienda['sito_web']); ?></a>
+            <?php else: ?>
+                N/A
+            <?php endif; ?>
+        </p>
+        <p><strong>Stato:</strong> <?php echo htmlspecialchars($azienda['stato'] ?? 'N/A'); ?></p>
         <?php if (!empty($azienda['id_successore'])): ?>
             <p><strong>Successore:</strong> 
                 <a href="azienda_costruttrice.php?id=<?php echo urlencode($azienda['id_successore']); ?>">
@@ -63,6 +69,9 @@ if ($id_azienda) {
     <?php else: ?>
         <p>Azienda non trovata.</p>
     <?php endif; ?>
+    <div class="mt-4">
+        <a href="/aziende_costruttrici.php" class="btn btn-secondary">Torna alla pagina Aziende Costruttrici</a>
+    </div>
 </div>
 
 <?php include 'footer.php'; // Include il footer ?>
