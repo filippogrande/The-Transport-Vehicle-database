@@ -3,19 +3,18 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-require_once 'Utilities/dbconnect.php'; // Connessione al database corretta
+require_once 'Utilities/dbconnect.php'; // Connessione al database con PDO
+
 include 'header.html'; // Include l'header
 
 $id_azienda = $_GET['id'] ?? null;
 
 if ($id_azienda) {
-    $query = "SELECT * FROM azienda_costruttrice WHERE id_azienda = ?";
-    $stmt = $conn->prepare($query);
-    $stmt->bind_param("i", $id_azienda);
+    $query = "SELECT * FROM azienda_costruttrice WHERE id_azienda = :id_azienda";
+    $stmt = $pdo->prepare($query);
+    $stmt->bindParam(':id_azienda', $id_azienda, PDO::PARAM_INT);
     $stmt->execute();
-    $result = $stmt->get_result();
-    $azienda = $result->fetch_assoc();
-    $stmt->close();
+    $azienda = $stmt->fetch(PDO::FETCH_ASSOC);
 }
 ?>
 
@@ -38,14 +37,12 @@ if ($id_azienda) {
             <p><strong>Successore:</strong> 
                 <a href="azienda_costruttrice.php?id=<?php echo urlencode($azienda['id_successore']); ?>">
                     <?php
-                    $query_successore = "SELECT nome FROM azienda_costruttrice WHERE id_azienda = ?";
-                    $stmt_successore = $conn->prepare($query_successore);
-                    $stmt_successore->bind_param("i", $azienda['id_successore']);
+                    $query_successore = "SELECT nome FROM azienda_costruttrice WHERE id_azienda = :id_successore";
+                    $stmt_successore = $pdo->prepare($query_successore);
+                    $stmt_successore->bindParam(':id_successore', $azienda['id_successore'], PDO::PARAM_INT);
                     $stmt_successore->execute();
-                    $result_successore = $stmt_successore->get_result();
-                    $successore = $result_successore->fetch_assoc();
+                    $successore = $stmt_successore->fetch(PDO::FETCH_ASSOC);
                     echo htmlspecialchars($successore['nome'] ?? 'N/A');
-                    $stmt_successore->close();
                     ?>
                 </a>
             </p>
