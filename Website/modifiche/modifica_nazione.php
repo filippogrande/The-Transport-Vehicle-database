@@ -56,10 +56,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         // Controlla se il file è un'immagine
         $estensione = strtolower(pathinfo($percorso_destinazione, PATHINFO_EXTENSION));
-        $tipi_consentiti = ['jpg', 'jpeg', 'png', 'gif'];
+        $tipi_consentiti = ['jpg', 'jpeg', 'png', 'gif', 'webp']; // Aggiunto 'webp'
 
         if (!in_array($estensione, $tipi_consentiti)) {
-            die("Errore: Formato file non valido. Sono ammessi solo JPG, PNG, GIF.");
+            die("Errore: Formato file non valido. Sono ammessi solo JPG, PNG, GIF, WebP.");
         }
 
         // Sposta il file nella cartella di destinazione
