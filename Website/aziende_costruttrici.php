@@ -46,7 +46,7 @@ include 'header.html'; // Includi il file header.php
 <!-- Visualizzazione del messaggio (se presente) e della tabella -->
 <div class="container mt-4">
     <h1 class="mb-3">Aziende Costruttrici</h1>
-    <a href="Aggiunte/crea_azienda.php" class="btn btn-primary mb-3 ms-auto d-block" style="width: auto;">Crea Nuova Azienda</a>
+    <a href="Aggiunte/crea_azienda_costuttrice.php" class="btn btn-primary mb-3 ms-auto d-block" style="width: auto;">Crea Nuova Azienda</a>
 
     <?php if ($aziende_messaggio): ?>
         <div class="alert alert-warning"><?php echo $aziende_messaggio; ?></div>

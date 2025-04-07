@@ -169,8 +169,8 @@ try {
                     form.method = 'POST';
                     form.submit();
                     break;
-                case 'tabella_2':
-                    form.action = 'gestisci_tabella_2.php';
+                case 'azienda_costruttrice': // Aggiunto supporto per azienda_costruttrice
+                    form.action = 'gestisci_azienda_costruttrice.php';
                     form.method = 'POST';
                     form.submit();
                     break;

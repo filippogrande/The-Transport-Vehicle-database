@@ -37,6 +37,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         die("Errore: Il nome dell'azienda è obbligatorio.");
     }
 
+    if (!empty($fondazione)) {
+        // Completa la data parziale con valori predefiniti
+        if (preg_match('/^\d{4}$/', $fondazione)) {
+            $fondazione .= '-01-01'; // Solo anno
+        } elseif (preg_match('/^\d{4}-\d{2}$/', $fondazione)) {
+            $fondazione .= '-01'; // Anno e mese
+        }
+
+        // Validazione del formato completo della data
+        if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $fondazione)) {
+            die("Errore: Il formato della data di fondazione non è valido.");
+        }
+    }
+
     // Creazione della cartella per il logo
     $cartella = "../Photo/azienda/" . strtolower(str_replace(' ', '_', $nome)) . "/";
     if (!is_dir($cartella)) {
