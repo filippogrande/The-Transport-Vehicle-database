@@ -66,7 +66,11 @@ include 'header.html'; // Includi il file header.php
             <tbody>
                 <?php foreach ($aziende as $azienda): ?>
                     <tr>
-                        <td><?php echo htmlspecialchars($azienda['nome'] ?? ''); ?></td>
+                        <td>
+                            <a href="azienda_costruttrice.php?id=<?php echo urlencode($azienda['id_azienda'] ?? ''); ?>">
+                                <?php echo htmlspecialchars($azienda['nome'] ?? ''); ?>
+                            </a>
+                        </td>
                         <td><?php echo htmlspecialchars($azienda['short_desc'] ?? ''); ?></td>
                         <td><?php echo htmlspecialchars($azienda['nazione'] ?? ''); ?></td>
                         <td>
