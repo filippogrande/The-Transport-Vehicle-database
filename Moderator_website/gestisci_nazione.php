@@ -129,24 +129,21 @@ try {
         if ($nazione) {
             echo "<p>Nazione trovata: {$nazione['nome']}</p>";
 
-            // Mantieni i valori esistenti se non sono stati modificati
-            switch (true) {
-                case $codice_iso === null:
-                    $codice_iso = $nazione['codice_iso'];
-                    break;
-                case $codice_iso2 === null:
-                    $codice_iso2 = $nazione['codice_iso2'];
-                    break;
-                case $continente === null:
-                    $continente = $nazione['continente'];
-                    break;
-                case $capitale === null:
-                    $capitale = $nazione['capitale'];
-                    break;
-                case $bandiera === null:
-                    $bandiera = $nazione['bandiera'];
-                    break;
-            }
+            // Traccia i campi modificati
+            $campi_modificati = [
+                'codice_iso' => $codice_iso !== null,
+                'codice_iso2' => $codice_iso2 !== null,
+                'continente' => $continente !== null,
+                'capitale' => $capitale !== null,
+                'bandiera' => $bandiera !== null,
+            ];
+
+            // Mantieni i valori esistenti solo per i campi non modificati
+            $codice_iso = $campi_modificati['codice_iso'] ? $codice_iso : $nazione['codice_iso'];
+            $codice_iso2 = $campi_modificati['codice_iso2'] ? $codice_iso2 : $nazione['codice_iso2'];
+            $continente = $campi_modificati['continente'] ? $continente : $nazione['continente'];
+            $capitale = $campi_modificati['capitale'] ? $capitale : $nazione['capitale'];
+            $bandiera = $campi_modificati['bandiera'] ? $bandiera : $nazione['bandiera'];
 
             // Aggiorna i dati della nazione
             $update_query = "
