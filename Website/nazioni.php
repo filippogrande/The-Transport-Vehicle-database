@@ -41,8 +41,10 @@ try {
 }
 
 include 'header.html'; // Includi il file header.php
-
 ?>
+
+<!-- Aggiungi il collegamento a Font Awesome -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
 
 <!-- Visualizzazione del messaggio (se presente) e della tabella -->
 <div class="container mt-4">
@@ -83,7 +85,7 @@ include 'header.html'; // Includi il file header.php
                         </td>
                         <td>
                             <a href="/modifiche/modifica_nazione.php?nome=<?php echo urlencode($nazione['nome'] ?? ''); ?>" class="btn btn-warning btn-sm d-flex align-items-center justify-content-center" style="width: 40px; height: 40px; font-size: 16px;">
-                                <i class="fas fa-pencil-alt"></i> <!-- Solo icona matita -->
+                                <i class="fas fa-pencil-alt"></i> <!-- Icona matita -->
                             </a>
                         </td>
                     </tr>
