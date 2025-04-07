@@ -42,6 +42,8 @@ try {
 
 include 'header.html'; // Includi il file header.php
 
+<!-- Aggiungi il collegamento a Font Awesome -->
+ <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
 ?>
 
 <!-- Visualizzazione del messaggio (se presente) e della tabella -->

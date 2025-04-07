@@ -65,6 +65,11 @@ try {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Modifiche in sospeso</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .same-value {
+            background-color: #d4edda; /* Verde chiaro */
+        }
+    </style>
 </head>
 <body class="bg-light">
 
@@ -82,90 +87,90 @@ try {
         </div>
 
         <form id="modificaForm" action="processa_modifica.php" method="GET">
-    <input type="hidden" name="id_gruppo_modifica" value="<?= htmlspecialchars($id_gruppo_modifica) ?>">
-    <input type="hidden" name="tabella_destinazione" value="<?= htmlspecialchars($tabella_destinazione) ?>">
+            <input type="hidden" name="id_gruppo_modifica" value="<?= htmlspecialchars($id_gruppo_modifica) ?>">
+            <input type="hidden" name="tabella_destinazione" value="<?= htmlspecialchars($tabella_destinazione) ?>">
 
-    <div class="table-responsive">
-        <table class="table table-bordered table-striped align-middle text-center">
-            <thead class="table-dark">
-                <tr>
-                    <th>Campo Modificato</th>
-                    <th>Nuovo Valore</th>
-                    <th>Vecchio Valore</th>
-                    <th>Autore</th>
-                    <th>Seleziona</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php foreach ($modifiche as $modifica): ?>
-                    <tr>
-                        <td><?= htmlspecialchars($modifica['campo_modificato']) ?></td>
-                        <td><?= formatMedia($modifica['valore_nuovo']) ?></td>
-                        <td><?= $modifica['valore_vecchio'] !== null ? formatMedia($modifica['valore_vecchio']) : "<i>Nessun valore precedente</i>" ?></td>
-                        <td><?= htmlspecialchars($modifica['autore']) ?></td>
-                        <td>
-                            <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" name="modifica_selezionata[]" value="<?= htmlspecialchars($modifica['id_modifica']) ?>" id="modifica_<?= htmlspecialchars($modifica['id_modifica']) ?>" checked>
-                                <label class="form-check-label" for="modifica_<?= htmlspecialchars($modifica['id_modifica']) ?>"></label>
-                            </div>
-                        </td>
-                    </tr>
-                <?php endforeach; ?>
-            </tbody>
-        </table>
-    </div>
+            <div class="table-responsive">
+                <table class="table table-bordered table-striped align-middle text-center">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Campo Modificato</th>
+                            <th>Nuovo Valore</th>
+                            <th>Vecchio Valore</th>
+                            <th>Autore</th>
+                            <th>Seleziona</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($modifiche as $modifica): ?>
+                            <tr class="<?= $modifica['valore_nuovo'] === $modifica['valore_vecchio'] ? 'same-value' : '' ?>">
+                                <td><?= htmlspecialchars($modifica['campo_modificato']) ?></td>
+                                <td><?= formatMedia($modifica['valore_nuovo']) ?></td>
+                                <td><?= $modifica['valore_vecchio'] !== null ? formatMedia($modifica['valore_vecchio']) : "<i>Nessun valore precedente</i>" ?></td>
+                                <td><?= htmlspecialchars($modifica['autore']) ?></td>
+                                <td>
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" name="modifica_selezionata[]" value="<?= htmlspecialchars($modifica['id_modifica']) ?>" id="modifica_<?= htmlspecialchars($modifica['id_modifica']) ?>" checked>
+                                        <label class="form-check-label" for="modifica_<?= htmlspecialchars($modifica['id_modifica']) ?>"></label>
+                                    </div>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
 
-    <div class="d-flex justify-content-start gap-3 mt-3">
-        <button type="button" class="btn btn-primary" onclick="submitForm()">Invia Modifiche</button>
-    </div>
-</form>
+            <div class="d-flex justify-content-start gap-3 mt-3">
+                <button type="button" class="btn btn-primary" onclick="submitForm()">Invia Modifiche</button>
+            </div>
+        </form>
 
-<script>
-function submitForm() {
-    const form = document.getElementById('modificaForm');
-    const tabella = form.querySelector('input[name="tabella_destinazione"]').value;
+        <script>
+        function submitForm() {
+            const form = document.getElementById('modificaForm');
+            const tabella = form.querySelector('input[name="tabella_destinazione"]').value;
 
-    // Ottieni gli ID delle modifiche non selezionate (switch su "off")
-    const unchecked = Array.from(form.querySelectorAll('input[type="checkbox"]:not(:checked)'))
-        .map(cb => cb.value);
+            // Ottieni gli ID delle modifiche non selezionate (switch su "off")
+            const unchecked = Array.from(form.querySelectorAll('input[type="checkbox"]:not(:checked)'))
+                .map(cb => cb.value);
 
-    if (unchecked.length > 0) {
-        // Invia una richiesta per verificare ed eliminare i file associati alle modifiche non selezionate
-        fetch('verifica_ed_elimina_file.php', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ modifiche_non_selezionate: unchecked })
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                console.log('File associati alle modifiche non selezionate eliminati con successo.');
-            } else {
-                console.error('Errore durante l\'eliminazione dei file:', data.error);
+            if (unchecked.length > 0) {
+                // Invia una richiesta per verificare ed eliminare i file associati alle modifiche non selezionate
+                fetch('verifica_ed_elimina_file.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ modifiche_non_selezionate: unchecked })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        console.log('File associati alle modifiche non selezionate eliminati con successo.');
+                    } else {
+                        console.error('Errore durante l\'eliminazione dei file:', data.error);
+                    }
+                })
+                .catch(error => console.error('Errore nella richiesta:', error));
             }
-        })
-        .catch(error => console.error('Errore nella richiesta:', error));
-    }
 
-    // Cambia l'azione del form in base alla tabella e invia il form
-    switch (tabella) {
-        case 'nazione':
-            form.action = 'gestisci_nazione.php';
-            form.method = 'POST';
-            form.submit();
-            break;
-        case 'tabella_2':
-            form.action = 'gestisci_tabella_2.php';
-            form.method = 'POST';
-            form.submit();
-            break;
-        // Aggiungi altri casi se necessario
-        default:
-            alert('Tabella non supportata');
-            break;
-    }
-}
-</script>
+            // Cambia l'azione del form in base alla tabella e invia il form
+            switch (tabella) {
+                case 'nazione':
+                    form.action = 'gestisci_nazione.php';
+                    form.method = 'POST';
+                    form.submit();
+                    break;
+                case 'tabella_2':
+                    form.action = 'gestisci_tabella_2.php';
+                    form.method = 'POST';
+                    form.submit();
+                    break;
+                // Aggiungi altri casi se necessario
+                default:
+                    alert('Tabella non supportata');
+                    break;
+            }
+        }
+        </script>
 
     <?php endif; ?>
 </div> 
