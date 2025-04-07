@@ -1,4 +1,4 @@
-CREATE TYPE stato_azienda_enum AS ENUM ('Attiva', 'Fallita', 'Acquisita', 'Rinominata');
+CREATE TYPE stato_azienda_enum AS ENUM ('Attiva', 'Fallita', 'Acquisita', 'Rinominata', 'Chiusa');
 CREATE TYPE tipo_modello_enum AS ENUM ('Autobus', 'Tram', 'Treno', 'Metro', 'Filobus', 'Altro');
 CREATE TYPE stato_veicolo_enum AS ENUM ('Attivo', 'Abbandonato', 'Demolito', 'Museo', 'Ceduto');
 CREATE TYPE stato_possesso_enum AS ENUM ('Attivo', 'Deposito indefinito', 'Venduto');

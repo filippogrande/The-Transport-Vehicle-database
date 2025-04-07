@@ -11,6 +11,8 @@ if (!$pdo) {
     die("Errore nella connessione al database.");
 }
 
+include '../header.html'; // Include l'header
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // Ottieni i dati inviati dal form
     $nome = trim($_POST['nome']);

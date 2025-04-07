@@ -103,6 +103,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         echo "Errore nell'inserimento della modifica: " . $e->getMessage();
     }
 }
+
+include '../header.html'; // Include l'header
 ?>
 
 <!DOCTYPE html>

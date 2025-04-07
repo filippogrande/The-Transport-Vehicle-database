@@ -33,18 +33,32 @@ try {
     die("Errore nella query: " . $e->getMessage());
 }
 
+// Recupera le nazioni dal database
+$nazioni = [];
+try {
+    $stmt = $pdo->query("SELECT nome FROM nazione");
+    $nazioni = $stmt->fetchAll(PDO::FETCH_ASSOC);
+} catch (PDOException $e) {
+    die("Errore nel recupero delle nazioni: " . $e->getMessage());
+}
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // Ottieni i dati inviati dal form
     $nome = trim($_POST['nome'] ?? '');
-    $short_desc = trim($_POST['short_desc'] ?? '');
-    $long_desc = trim($_POST['long_desc'] ?? '');
-    $fondazione = trim($_POST['fondazione'] ?? '');
-    $chiusura = trim($_POST['chiusura'] ?? '');
-    $sede = trim($_POST['sede'] ?? '');
-    $nazione = trim($_POST['nazione'] ?? '');
-    $sito_web = trim($_POST['sito_web'] ?? '');
-    $stato = trim($_POST['stato'] ?? '');
-    
+    $short_desc = trim($_POST['short_desc'] ?? null);
+    $long_desc = trim($_POST['long_desc'] ?? null);
+    $fondazione = trim($_POST['fondazione'] ?? null);
+    $chiusura = trim($_POST['chiusura'] ?? null);
+    $sede = trim($_POST['sede'] ?? null);
+    $nazione = trim($_POST['nazione'] ?? null);
+    $sito_web = trim($_POST['sito_web'] ?? null);
+    $stato = trim($_POST['stato'] ?? null);
+
+    // Verifica che il nome dell'azienda sia stato fornito
+    if (empty($nome)) {
+        die("Errore: Il nome dell'azienda è obbligatorio.");
+    }
+
     // Creazione della cartella per il logo
     $cartella = "../Photo/azienda/" . strtolower(str_replace(' ', '_', $nome)) . "/";
     if (!is_dir($cartella)) {
@@ -111,6 +125,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         echo "Errore nell'inserimento della modifica: " . $e->getMessage();
     }
 }
+
+include '../header.html'; // Include l'header
 ?>
 
 <!DOCTYPE html>
@@ -151,7 +167,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         </div>
         <div class="mb-3">
             <label for="nazione" class="form-label">Nazione</label>
-            <input type="text" class="form-control" id="nazione" name="nazione" value="<?= htmlspecialchars($azienda['nazione'] ?? '') ?>">
+            <select class="form-control" id="nazione" name="nazione">
+                <option value="">Seleziona una nazione</option>
+                <?php foreach ($nazioni as $n): ?>
+                    <option value="<?= htmlspecialchars($n['nome']) ?>" <?= ($azienda['nazione'] ?? '') === $n['nome'] ? 'selected' : '' ?>>
+                        <?= htmlspecialchars($n['nome']) ?>
+                    </option>
+                <?php endforeach; ?>
+            </select>
         </div>
         <div class="mb-3">
             <label for="sito_web" class="form-label">Sito Web</label>
@@ -162,6 +185,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <select class="form-control" id="stato" name="stato">
                 <option value="Attiva" <?= ($azienda['stato'] ?? '') === 'Attiva' ? 'selected' : '' ?>>Attiva</option>
                 <option value="Chiusa" <?= ($azienda['stato'] ?? '') === 'Chiusa' ? 'selected' : '' ?>>Chiusa</option>
+                <option value="Fallita" <?= ($azienda['stato'] ?? '') === 'Fallita' ? 'selected' : '' ?>>Fallita</option>
+                <option value="Acquisita" <?= ($azienda['stato'] ?? '') === 'Acquisita' ? 'selected' : '' ?>>Acquisita</option>
+                <option value="Rinominata" <?= ($azienda['stato'] ?? '') === 'Rinominata' ? 'selected' : '' ?>>Rinominata</option>
             </select>
         </div>
         <div class="mb-3">

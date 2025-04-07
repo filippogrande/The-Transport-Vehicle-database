@@ -157,6 +157,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         echo "Errore nell'inserimento della modifica: " . $e->getMessage();
     }
 }
+
+include '../header.html'; // Include l'header
 ?>
 
 
@@ -213,6 +215,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <select class="form-control" id="stato" name="stato">
                 <option value="Attiva">Attiva</option>
                 <option value="Chiusa">Chiusa</option>
+                <option value="Fallita">Fallita</option>
+                <option value="Acquisita">Acquisita</option>
+                <option value="Rinominata">Rinominata</option>
             </select>
         </div>
         <div class="mb-3">
