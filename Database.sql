@@ -45,7 +45,7 @@ CREATE TABLE modello (
     lunghezza DECIMAL(5,2),
     larghezza DECIMAL(5,2),
     altezza DECIMAL(5,2),
-    peso DECIMAL(6,2),
+    peso DECIMAL(10,2);
     motorizzazione VARCHAR(100),
     velocita_massima DECIMAL(5,2),
     descrizione TEXT,

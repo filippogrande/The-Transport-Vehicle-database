@@ -9,19 +9,23 @@ include 'header.html'; // Include l'header
 
 $id_modello = $_GET['id'] ?? null;
 
-if ($id_modello) {
-    $query = "SELECT * FROM modello WHERE id_modello = :id_modello";
-    $stmt = $pdo->prepare($query);
-    $stmt->bindParam(':id_modello', $id_modello, PDO::PARAM_INT);
-    $stmt->execute();
-    $modello = $stmt->fetch(PDO::FETCH_ASSOC);
+if (!$id_modello) {
+    die("Errore: ID del modello non fornito.");
+}
+
+$query = "SELECT * FROM modello WHERE id_modello = :id_modello";
+$stmt = $pdo->prepare($query);
+$stmt->bindParam(':id_modello', $id_modello, PDO::PARAM_INT);
+$stmt->execute();
+$modello = $stmt->fetch(PDO::FETCH_ASSOC);
+
+if (!$modello) {
+    die("Errore: Modello non trovato.");
 }
 ?>
 
 <div class="container">
-    <div class="mt-4 d-flex justify-content-end">
-        <a href="/Aggiunte/crea_modello.php" class="btn btn-primary">Crea Nuovo Modello</a>
-    </div>
+    <!-- Rimosso il pulsante "Crea Nuovo Modello" -->
     <?php if (!empty($modello)): ?>
         <h1><?php echo htmlspecialchars($modello['nome']); ?></h1>
         <p><strong>Tipo:</strong> <?php echo htmlspecialchars($modello['tipo'] ?? 'N/A'); ?></p>

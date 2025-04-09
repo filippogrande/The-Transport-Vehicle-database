@@ -36,6 +36,23 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         die("Errore: Il nome del modello è obbligatorio.");
     }
 
+    // Validazione dei campi numerici
+    if ($lunghezza !== null && ($lunghezza < 0 || $lunghezza >= 10000)) {
+        die("Errore: La lunghezza deve essere compresa tra 0 e 9999.99.");
+    }
+    if ($larghezza !== null && ($larghezza < 0 || $larghezza >= 10000)) {
+        die("Errore: La larghezza deve essere compresa tra 0 e 9999.99.");
+    }
+    if ($altezza !== null && ($altezza < 0 || $altezza >= 10000)) {
+        die("Errore: L'altezza deve essere compresa tra 0 e 9999.99.");
+    }
+    if ($peso !== null && ($peso < 0 || $peso >= 10000000000)) { // Aggiornato il limite per il peso
+        die("Errore: Il peso deve essere compreso tra 0 e 9999999999.99.");
+    }
+    if ($velocita_massima !== null && ($velocita_massima < 0 || $velocita_massima >= 10000)) {
+        die("Errore: La velocità massima deve essere compresa tra 0 e 9999.99.");
+    }
+
     // Completa l'anno con una data predefinita
     if (!empty($anno_inizio_produzione)) {
         $anno_inizio_produzione .= '-01-01';
@@ -70,6 +87,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         echo "Il modello è stato creato con successo.";
     } catch (PDOException $e) {
         echo "Errore nell'inserimento del modello: " . $e->getMessage();
+        die();
     }
 }
 ?>
