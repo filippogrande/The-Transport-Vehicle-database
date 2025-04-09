@@ -6,6 +6,15 @@ require_once '../Utilities/dbconnect.php'; // Connessione al database con PDO
 
 include '../header.html'; // Include l'header
 
+// Recupera i paesi dalla tabella `nazione`
+try {
+    $query_nazioni = "SELECT nome FROM nazione ORDER BY nome ASC";
+    $stmt_nazioni = $pdo->query($query_nazioni);
+    $nazioni = $stmt_nazioni->fetchAll(PDO::FETCH_ASSOC);
+} catch (PDOException $e) {
+    die("Errore nel recupero delle nazioni: " . $e->getMessage());
+}
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // Ottieni i dati inviati dal form
     $nome_azienda = trim($_POST['nome_azienda']);
@@ -124,7 +133,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         </div>
         <div class="mb-3">
             <label for="paese" class="form-label">Paese</label>
-            <input type="text" class="form-control" id="paese" name="paese">
+            <select class="form-control" id="paese" name="paese">
+                <option value="">Seleziona un paese</option>
+                <?php foreach ($nazioni as $nazione): ?>
+                    <option value="<?php echo htmlspecialchars($nazione['nome']); ?>">
+                        <?php echo htmlspecialchars($nazione['nome']); ?>
+                    </option>
+                <?php endforeach; ?>
+            </select>
         </div>
         <div class="mb-3">
             <label for="numero_telefono" class="form-label">Numero di Telefono</label>
