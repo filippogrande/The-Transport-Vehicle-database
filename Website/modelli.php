@@ -23,30 +23,32 @@ try {
         <a href="/Aggiunte/crea_modello.php" class="btn btn-primary">Crea Nuovo Modello</a>
     </div>
     <?php if (!empty($modelli)): ?>
-        <table class="table table-striped">
-            <thead>
-                <tr>
-                    <th>Nome</th>
-                    <th>Tipo</th>
-                    <th>Azioni</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php foreach ($modelli as $modello): ?>
-                    <tr>
-                        <td>
-                            <a href="/modello.php?id=<?php echo urlencode($modello['id_modello']); ?>">
-                                <?php echo htmlspecialchars($modello['nome']); ?>
-                            </a>
-                        </td>
-                        <td><?php echo htmlspecialchars($modello['tipo'] ?? 'N/A'); ?></td>
-                        <td>
-                            <a href="/modello.php?id=<?php echo urlencode($modello['id_modello']); ?>" class="btn btn-info btn-sm">Visualizza</a>
-                        </td>
-                    </tr>
-                <?php endforeach; ?>
-            </tbody>
-        </table>
+        <div class="row">
+            <?php foreach ($modelli as $modello): ?>
+                <div class="col-md-6 mb-4">
+                    <div class="card">
+                        <div class="row g-0">
+                            <!-- Spazio per la foto -->
+                            <div class="col-md-4">
+                                <img src="https://via.placeholder.com/150" class="img-fluid rounded-start" alt="Foto di <?php echo htmlspecialchars($modello['nome']); ?>">
+                            </div>
+                            <!-- Dettagli del modello -->
+                            <div class="col-md-8">
+                                <div class="card-body">
+                                    <h5 class="card-title">
+                                        <a href="/modello.php?id=<?php echo urlencode($modello['id_modello']); ?>">
+                                            <?php echo htmlspecialchars($modello['nome']); ?>
+                                        </a>
+                                    </h5>
+                                    <p class="card-text"><strong>Tipo:</strong> <?php echo htmlspecialchars($modello['tipo'] ?? 'N/A'); ?></p>
+                                    <a href="/modello.php?id=<?php echo urlencode($modello['id_modello']); ?>" class="btn btn-info btn-sm">Visualizza Dettagli</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            <?php endforeach; ?>
+        </div>
     <?php else: ?>
         <p>Non ci sono modelli disponibili.</p>
     <?php endif; ?>
