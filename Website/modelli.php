@@ -25,25 +25,19 @@ try {
     <?php if (!empty($modelli)): ?>
         <div class="row">
             <?php foreach ($modelli as $modello): ?>
-                <div class="col-md-6 mb-4">
-                    <div class="card">
-                        <div class="row g-0">
-                            <!-- Spazio per la foto -->
-                            <div class="col-md-4">
-                                <img src="https://via.placeholder.com/150" class="img-fluid rounded-start" alt="Foto di <?php echo htmlspecialchars($modello['nome']); ?>">
-                            </div>
-                            <!-- Dettagli del modello -->
-                            <div class="col-md-8">
-                                <div class="card-body">
-                                    <h5 class="card-title">
-                                        <a href="/modello.php?id=<?php echo urlencode($modello['id_modello']); ?>">
-                                            <?php echo htmlspecialchars($modello['nome']); ?>
-                                        </a>
-                                    </h5>
-                                    <p class="card-text"><strong>Tipo:</strong> <?php echo htmlspecialchars($modello['tipo'] ?? 'N/A'); ?></p>
-                                    <a href="/modello.php?id=<?php echo urlencode($modello['id_modello']); ?>" class="btn btn-info btn-sm">Visualizza Dettagli</a>
-                                </div>
-                            </div>
+                <div class="col-md-4 mb-4">
+                    <div class="card text-center">
+                        <!-- Immagine sopra -->
+                        <img src="https://via.placeholder.com/150" class="card-img-top" alt="Foto di <?php echo htmlspecialchars($modello['nome']); ?>">
+                        <!-- Nome sotto -->
+                        <div class="card-body">
+                            <h5 class="card-title">
+                                <a href="/modello.php?id=<?php echo urlencode($modello['id_modello']); ?>">
+                                    <?php echo htmlspecialchars($modello['nome']); ?>
+                                </a>
+                            </h5>
+                            <p class="card-text"><strong>Tipo:</strong> <?php echo htmlspecialchars($modello['tipo'] ?? 'N/A'); ?></p>
+                            <a href="/modello.php?id=<?php echo urlencode($modello['id_modello']); ?>" class="btn btn-info btn-sm">Visualizza Dettagli</a>
                         </div>
                     </div>
                 </div>
