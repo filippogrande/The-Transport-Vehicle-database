@@ -28,6 +28,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $velocita_massima = isset($_POST['velocita_massima']) ? trim($_POST['velocita_massima']) : null;
     $descrizione = isset($_POST['descrizione']) ? trim($_POST['descrizione']) : null;
     $totale_veicoli = isset($_POST['totale_veicoli']) ? trim($_POST['totale_veicoli']) : null;
+    $posti_seduti = isset($_POST['posti_seduti']) ? trim($_POST['posti_seduti']) : 0;
+    $posti_in_piedi = isset($_POST['posti_in_piedi']) ? trim($_POST['posti_in_piedi']) : 0;
+    $posti_carrozzine = isset($_POST['posti_carrozzine']) ? trim($_POST['posti_carrozzine']) : 0;
 
     // Verifica che il nome del modello sia stato fornito
     if (empty($nome)) {
@@ -44,8 +47,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     // Inseriamo i dati nella tabella `modello`
     try {
-        $query = "INSERT INTO modello (nome, tipo, anno_inizio_produzione, anno_fine_produzione, capienza, lunghezza, larghezza, altezza, peso, motorizzazione, velocita_massima, descrizione, totale_veicoli) 
-                  VALUES (:nome, :tipo, :anno_inizio_produzione, :anno_fine_produzione, :capienza, :lunghezza, :larghezza, :altezza, :peso, :motorizzazione, :velocita_massima, :descrizione, :totale_veicoli)";
+        $query = "INSERT INTO modello (nome, tipo, anno_inizio_produzione, anno_fine_produzione, capienza, lunghezza, larghezza, altezza, peso, motorizzazione, velocita_massima, descrizione, totale_veicoli, posti_seduti, posti_in_piedi, posti_carrozzine) 
+                  VALUES (:nome, :tipo, :anno_inizio_produzione, :anno_fine_produzione, :capienza, :lunghezza, :larghezza, :altezza, :peso, :motorizzazione, :velocita_massima, :descrizione, :totale_veicoli, :posti_seduti, :posti_in_piedi, :posti_carrozzine)";
         $stmt = $pdo->prepare($query);
         $stmt->bindParam(':nome', $nome);
         $stmt->bindParam(':tipo', $tipo);
@@ -60,6 +63,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $stmt->bindParam(':velocita_massima', $velocita_massima);
         $stmt->bindParam(':descrizione', $descrizione);
         $stmt->bindParam(':totale_veicoli', $totale_veicoli);
+        $stmt->bindParam(':posti_seduti', $posti_seduti);
+        $stmt->bindParam(':posti_in_piedi', $posti_in_piedi);
+        $stmt->bindParam(':posti_carrozzine', $posti_carrozzine);
 
         $stmt->execute();
 
@@ -141,6 +147,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <div class="mb-3">
             <label for="totale_veicoli" class="form-label">Totale Veicoli Prodotti</label>
             <input type="number" class="form-control" id="totale_veicoli" name="totale_veicoli">
+        </div>
+        <div class="mb-3">
+            <label for="posti_seduti" class="form-label">Posti Seduti</label>
+            <input type="number" class="form-control" id="posti_seduti" name="posti_seduti" min="0" value="0">
+        </div>
+        <div class="mb-3">
+            <label for="posti_in_piedi" class="form-label">Posti in Piedi</label>
+            <input type="number" class="form-control" id="posti_in_piedi" name="posti_in_piedi" min="0" value="0">
+        </div>
+        <div class="mb-3">
+            <label for="posti_carrozzine" class="form-label">Posti Carrozzine</label>
+            <input type="number" class="form-control" id="posti_carrozzine" name="posti_carrozzine" min="0" value="0">
         </div>
         <button type="submit" class="btn btn-primary">Crea Modello</button>
         <a href="../modelli.php" class="btn btn-secondary">Torna alla pagina Modelli</a>

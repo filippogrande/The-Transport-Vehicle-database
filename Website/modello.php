@@ -27,7 +27,9 @@ if ($id_modello) {
         <p><strong>Tipo:</strong> <?php echo htmlspecialchars($modello['tipo'] ?? 'N/A'); ?></p>
         <p><strong>Anno Inizio Produzione:</strong> <?php echo htmlspecialchars($modello['anno_inizio_produzione'] ?? 'N/A'); ?></p>
         <p><strong>Anno Fine Produzione:</strong> <?php echo htmlspecialchars($modello['anno_fine_produzione'] ?? 'N/A'); ?></p>
-        <p><strong>Capienza:</strong> <?php echo htmlspecialchars($modello['capienza'] ?? 'N/A'); ?> persone</p>
+        <p><strong>Posti Seduti:</strong> <?php echo htmlspecialchars($modello['posti_seduti'] ?? 'N/A'); ?></p>
+        <p><strong>Posti in Piedi:</strong> <?php echo htmlspecialchars($modello['posti_in_piedi'] ?? 'N/A'); ?></p>
+        <p><strong>Posti Carrozzine:</strong> <?php echo htmlspecialchars($modello['posti_carrozzine'] ?? 'N/A'); ?></p>
         <p><strong>Dimensioni (Lunghezza x Larghezza x Altezza):</strong> 
             <?php echo htmlspecialchars($modello['lunghezza'] ?? 'N/A'); ?> m x 
             <?php echo htmlspecialchars($modello['larghezza'] ?? 'N/A'); ?> m x 
