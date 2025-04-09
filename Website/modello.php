@@ -27,9 +27,27 @@ if (!$modello) {
 <div class="container">
     <?php if (!empty($modello)): ?>
         <div class="row">
+            <!-- Nome centrale -->
+            <div class="col-md-12 text-center">
+                <h1><?php echo htmlspecialchars($modello['nome']); ?></h1>
+            </div>
+        </div>
+        <div class="row mt-3">
+            <!-- Pulsanti sulla destra -->
+            <div class="col-md-12 text-end">
+                <a href="/modifiche/modifica_modello.php?id=<?php echo urlencode($modello['id_modello']); ?>" 
+                   class="btn btn-warning btn-sm d-inline-flex align-items-center">
+                    <i class="fas fa-pencil-alt me-2"></i> Modifica
+                </a>
+                <a href="/Aggiunte/crea_variante_modello.php?id_base=<?php echo urlencode($modello['id_modello']); ?>" 
+                   class="btn btn-success btn-sm d-inline-flex align-items-center">
+                    <i class="fas fa-plus me-2"></i> Crea Variante
+                </a>
+            </div>
+        </div>
+        <div class="row mt-4">
             <!-- Descrizione sulla sinistra -->
             <div class="col-md-6">
-                <h1><?php echo htmlspecialchars($modello['nome']); ?></h1>
                 <p><strong>Descrizione:</strong> <?php echo nl2br(htmlspecialchars($modello['descrizione'] ?? 'N/A')); ?></p>
             </div>
             <!-- Dettagli sulla destra -->
