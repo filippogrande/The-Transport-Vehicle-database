@@ -1,0 +1,20 @@
+# ❌ Non tracciare il file .env (contiene info sensibili)
+.env
+
+# ❌ Non tracciare la cartella vendor/ (gestita da Composer)
+vendor/
+
+# ❌ Non tracciare i file temporanei o di log
+*.log
+
+# ❌ Non tracciare file del sistema operativo/editor
+.DS_Store
+Thumbs.db
+*.swp
+
+# ❌ Se usi PHPStorm, VSCode o altri IDE
+.idea/
+.vscode/
+
+# ❌ Se usi file di cache di Composer
+composer.lock

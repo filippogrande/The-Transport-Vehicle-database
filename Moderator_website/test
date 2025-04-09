@@ -1,8 +1,0 @@
-
-su - root
-cd ../websites/websites/ttvd/ 
-git pull
-systemctl restart nginx
-
-su - postgres
-psql -U postgres -d ttvd_db
