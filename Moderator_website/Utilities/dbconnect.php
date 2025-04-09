@@ -1,10 +1,14 @@
 <?php
-$host = 'localhost';  // O l'indirizzo IP del server PostgreSQL
-$dbname = 'ttvd_db';  // Nome del database creato
-$user = 'ttvd_user';  // Nome utente del database
-$password = "7GMMg50Mhy";  // Password dell'utente del database
+require_once __DIR__ . '/../vendor/autoload.php'; // torna indietro di una cartella
 
-// Connessione con PDO
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../'); // stesso percorso del .env
+$dotenv->load();
+
+$host = $_ENV['DB_HOST'];
+$dbname = $_ENV['DB_NAME'];
+$user = $_ENV['DB_USER'];
+$password = $_ENV['DB_PASS'];
+
 $dsn = "pgsql:host=$host;dbname=$dbname";
 try {
     $pdo = new PDO($dsn, $user, $password);
