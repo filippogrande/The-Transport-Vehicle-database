@@ -36,23 +36,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         die("Errore: Il nome del modello è obbligatorio.");
     }
 
-    // Validazione dei campi numerici
-    if ($lunghezza !== null && ($lunghezza < 0 || $lunghezza >= 10000)) {
-        die("Errore: La lunghezza deve essere compresa tra 0 e 9999.99.");
-    }
-    if ($larghezza !== null && ($larghezza < 0 || $larghezza >= 10000)) {
-        die("Errore: La larghezza deve essere compresa tra 0 e 9999.99.");
-    }
-    if ($altezza !== null && ($altezza < 0 || $altezza >= 10000)) {
-        die("Errore: L'altezza deve essere compresa tra 0 e 9999.99.");
-    }
-    if ($peso !== null && ($peso < 0 || $peso >= 10000000000)) { // Aggiornato il limite per il peso
-        die("Errore: Il peso deve essere compreso tra 0 e 9999999999.99.");
-    }
-    if ($velocita_massima !== null && ($velocita_massima < 0 || $velocita_massima >= 10000)) {
-        die("Errore: La velocità massima deve essere compresa tra 0 e 9999.99.");
-    }
-
     // Completa l'anno con una data predefinita
     if (!empty($anno_inizio_produzione)) {
         $anno_inizio_produzione .= '-01-01';
@@ -61,33 +44,45 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $anno_fine_produzione .= '-01-01';
     }
 
-    // Inseriamo i dati nella tabella `modello`
+    // ID gruppo modifica per raggruppare le modifiche
+    $id_gruppo_modifica = rand(1000, 9999);
+
+    // Inserisci i dati nella tabella `modifiche_in_sospeso`
     try {
-        $query = "INSERT INTO modello (nome, tipo, anno_inizio_produzione, anno_fine_produzione, lunghezza, larghezza, altezza, peso, motorizzazione, velocita_massima, descrizione, totale_veicoli, posti_seduti, posti_in_piedi, posti_carrozzine) 
-                  VALUES (:nome, :tipo, :anno_inizio_produzione, :anno_fine_produzione, :lunghezza, :larghezza, :altezza, :peso, :motorizzazione, :velocita_massima, :descrizione, :totale_veicoli, :posti_seduti, :posti_in_piedi, :posti_carrozzine)";
+        $query = "INSERT INTO modifiche_in_sospeso (id_gruppo_modifica, tabella_destinazione, campo_modificato, valore_nuovo, stato, autore) 
+                  VALUES (:id_gruppo_modifica, 'modello', :campo_modificato, :valore_nuovo, 'In attesa', 'admin')";
         $stmt = $pdo->prepare($query);
-        $stmt->bindParam(':nome', $nome);
-        $stmt->bindParam(':tipo', $tipo);
-        $stmt->bindParam(':anno_inizio_produzione', $anno_inizio_produzione);
-        $stmt->bindParam(':anno_fine_produzione', $anno_fine_produzione);
-        $stmt->bindParam(':lunghezza', $lunghezza);
-        $stmt->bindParam(':larghezza', $larghezza);
-        $stmt->bindParam(':altezza', $altezza);
-        $stmt->bindParam(':peso', $peso);
-        $stmt->bindParam(':motorizzazione', $motorizzazione);
-        $stmt->bindParam(':velocita_massima', $velocita_massima);
-        $stmt->bindParam(':descrizione', $descrizione);
-        $stmt->bindParam(':totale_veicoli', $totale_veicoli);
-        $stmt->bindParam(':posti_seduti', $posti_seduti);
-        $stmt->bindParam(':posti_in_piedi', $posti_in_piedi);
-        $stmt->bindParam(':posti_carrozzine', $posti_carrozzine);
 
-        $stmt->execute();
+        $campi = [
+            'nome' => $nome,
+            'tipo' => $tipo,
+            'anno_inizio_produzione' => $anno_inizio_produzione,
+            'anno_fine_produzione' => $anno_fine_produzione,
+            'lunghezza' => $lunghezza,
+            'larghezza' => $larghezza,
+            'altezza' => $altezza,
+            'peso' => $peso,
+            'motorizzazione' => $motorizzazione,
+            'velocita_massima' => $velocita_massima,
+            'descrizione' => $descrizione,
+            'totale_veicoli' => $totale_veicoli,
+            'posti_seduti' => $posti_seduti,
+            'posti_in_piedi' => $posti_in_piedi,
+            'posti_carrozzine' => $posti_carrozzine,
+        ];
 
-        echo "Il modello è stato creato con successo.";
+        foreach ($campi as $campo => $valore_nuovo) {
+            if ($valore_nuovo !== null) {
+                $stmt->bindParam(':id_gruppo_modifica', $id_gruppo_modifica);
+                $stmt->bindParam(':campo_modificato', $campo);
+                $stmt->bindParam(':valore_nuovo', $valore_nuovo);
+                $stmt->execute();
+            }
+        }
+
+        echo "Il modello è stato proposto con successo. In attesa di approvazione.";
     } catch (PDOException $e) {
-        echo "Errore nell'inserimento del modello: " . $e->getMessage();
-        die();
+        echo "Errore nell'inserimento della proposta: " . $e->getMessage();
     }
 }
 ?>
@@ -172,7 +167,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <label for="posti_carrozzine" class="form-label">Posti Carrozzine</label>
             <input type="number" class="form-control" id="posti_carrozzine" name="posti_carrozzine" min="0" value="0">
         </div>
-        <button type="submit" class="btn btn-primary">Crea Modello</button>
+        <button type="submit" class="btn btn-primary">Proponi Modello</button>
         <a href="../modelli.php" class="btn btn-secondary">Torna alla pagina Modelli</a>
     </form>
 </body>

@@ -38,37 +38,56 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $descrizione = isset($_POST['descrizione']) ? trim($_POST['descrizione']) : null;
     $totale_veicoli = isset($_POST['totale_veicoli']) ? trim($_POST['totale_veicoli']) : 0;
 
-    // Inserisci il nuovo modello
+    // Verifica che il nome della variante sia stato fornito
+    if (empty($nome)) {
+        die("Errore: Il nome della variante è obbligatorio.");
+    }
+
+    // ID gruppo modifica per raggruppare le modifiche
+    $id_gruppo_modifica = rand(1000, 9999);
+
+    // Inserisci i dati nella tabella `modifiche_in_sospeso`
     try {
-        $query = "INSERT INTO modello (nome, tipo, anno_inizio_produzione, anno_fine_produzione, lunghezza, larghezza, altezza, peso, motorizzazione, velocita_massima, descrizione, totale_veicoli) 
-                  VALUES (:nome, :tipo, :anno_inizio_produzione, :anno_fine_produzione, :lunghezza, :larghezza, :altezza, :peso, :motorizzazione, :velocita_massima, :descrizione, :totale_veicoli)";
+        $query = "INSERT INTO modifiche_in_sospeso (id_gruppo_modifica, tabella_destinazione, campo_modificato, valore_nuovo, stato, autore) 
+                  VALUES (:id_gruppo_modifica, 'modello', :campo_modificato, :valore_nuovo, 'In attesa', 'admin')";
         $stmt = $pdo->prepare($query);
-        $stmt->bindParam(':nome', $nome);
-        $stmt->bindParam(':tipo', $tipo);
-        $stmt->bindParam(':anno_inizio_produzione', $anno_inizio_produzione);
-        $stmt->bindParam(':anno_fine_produzione', $anno_fine_produzione);
-        $stmt->bindParam(':lunghezza', $lunghezza);
-        $stmt->bindParam(':larghezza', $larghezza);
-        $stmt->bindParam(':altezza', $altezza);
-        $stmt->bindParam(':peso', $peso);
-        $stmt->bindParam(':motorizzazione', $motorizzazione);
-        $stmt->bindParam(':velocita_massima', $velocita_massima);
-        $stmt->bindParam(':descrizione', $descrizione);
-        $stmt->bindParam(':totale_veicoli', $totale_veicoli);
-        $stmt->execute();
 
-        $id_modello_variante = $pdo->lastInsertId();
+        $campi = [
+            'nome' => $nome,
+            'tipo' => $tipo,
+            'anno_inizio_produzione' => $anno_inizio_produzione,
+            'anno_fine_produzione' => $anno_fine_produzione,
+            'lunghezza' => $lunghezza,
+            'larghezza' => $larghezza,
+            'altezza' => $altezza,
+            'peso' => $peso,
+            'motorizzazione' => $motorizzazione,
+            'velocita_massima' => $velocita_massima,
+            'descrizione' => $descrizione,
+            'totale_veicoli' => $totale_veicoli,
+        ];
 
-        // Inserisci la relazione nella tabella `variante_modello`
-        $query_variante = "INSERT INTO variante_modello (id_modello_base, id_modello_variante) VALUES (:id_modello_base, :id_modello_variante)";
+        foreach ($campi as $campo => $valore_nuovo) {
+            if ($valore_nuovo !== null) {
+                $stmt->bindParam(':id_gruppo_modifica', $id_gruppo_modifica);
+                $stmt->bindParam(':campo_modificato', $campo);
+                $stmt->bindParam(':valore_nuovo', $valore_nuovo);
+                $stmt->execute();
+            }
+        }
+
+        // Inserisci la relazione nella tabella `modifiche_in_sospeso` per `variante_modello`
+        $query_variante = "INSERT INTO modifiche_in_sospeso (id_gruppo_modifica, tabella_destinazione, id_entita, campo_modificato, valore_nuovo, stato, autore) 
+                           VALUES (:id_gruppo_modifica, 'variante_modello', :id_entita, 'id_modello_variante', :id_modello_variante, 'In attesa', 'admin')";
         $stmt_variante = $pdo->prepare($query_variante);
-        $stmt_variante->bindParam(':id_modello_base', $id_modello_base, PDO::PARAM_INT);
-        $stmt_variante->bindParam(':id_modello_variante', $id_modello_variante, PDO::PARAM_INT);
+        $stmt_variante->bindParam(':id_gruppo_modifica', $id_gruppo_modifica);
+        $stmt_variante->bindParam(':id_entita', $id_modello_base, PDO::PARAM_INT);
+        $stmt_variante->bindParam(':id_modello_variante', $nome); // Nome come identificativo temporaneo
         $stmt_variante->execute();
 
-        echo "La variante del modello è stata creata con successo.";
+        echo "La variante del modello è stata proposta con successo. In attesa di approvazione.";
     } catch (PDOException $e) {
-        echo "Errore nella creazione della variante: " . $e->getMessage();
+        echo "Errore nell'inserimento della proposta: " . $e->getMessage();
     }
 }
 ?>
@@ -94,7 +113,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <label for="descrizione" class="form-label">Descrizione</label>
             <textarea class="form-control" id="descrizione" name="descrizione" rows="5"></textarea>
         </div>
-        <button type="submit" class="btn btn-primary">Crea Variante</button>
+        <button type="submit" class="btn btn-primary">Proponi Variante</button>
         <a href="../modello.php?id=<?php echo urlencode($id_modello_base); ?>" class="btn btn-secondary">Annulla</a>
     </form>
 </body>

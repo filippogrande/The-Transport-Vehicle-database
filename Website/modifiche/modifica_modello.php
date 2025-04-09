@@ -46,63 +46,45 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         die("Errore: Il nome del modello è obbligatorio.");
     }
 
-    // Validazione dei campi numerici
-    if ($lunghezza !== null && ($lunghezza < 0 || $lunghezza >= 10000)) {
-        die("Errore: La lunghezza deve essere compresa tra 0 e 9999.99.");
-    }
-    if ($larghezza !== null && ($larghezza < 0 || $larghezza >= 10000)) {
-        die("Errore: La larghezza deve essere compresa tra 0 e 9999.99.");
-    }
-    if ($altezza !== null && ($altezza < 0 || $altezza >= 10000)) {
-        die("Errore: L'altezza deve essere compresa tra 0 e 9999.99.");
-    }
-    if ($peso !== null && ($peso < 0 || $peso >= 10000000000)) {
-        die("Errore: Il peso deve essere compreso tra 0 e 9999999999.99.");
-    }
-    if ($velocita_massima !== null && ($velocita_massima < 0 || $velocita_massima >= 10000)) {
-        die("Errore: La velocità massima deve essere compresa tra 0 e 9999.99.");
-    }
+    // ID gruppo modifica per raggruppare le modifiche
+    $id_gruppo_modifica = rand(1000, 9999);
 
-    // Completa l'anno con una data predefinita
-    if (!empty($anno_inizio_produzione)) {
-        $anno_inizio_produzione .= '-01-01';
-    }
-    if (!empty($anno_fine_produzione)) {
-        $anno_fine_produzione .= '-01-01';
-    }
-
-    // Aggiorna i dati nella tabella `modello`
+    // Inserisci le modifiche nella tabella `modifiche_in_sospeso`
     try {
-        $query = "UPDATE modello 
-                  SET nome = :nome, tipo = :tipo, anno_inizio_produzione = :anno_inizio_produzione, 
-                      anno_fine_produzione = :anno_fine_produzione, lunghezza = :lunghezza, larghezza = :larghezza, 
-                      altezza = :altezza, peso = :peso, motorizzazione = :motorizzazione, velocita_massima = :velocita_massima, 
-                      descrizione = :descrizione, totale_veicoli = :totale_veicoli, posti_seduti = :posti_seduti, 
-                      posti_in_piedi = :posti_in_piedi, posti_carrozzine = :posti_carrozzine
-                  WHERE id_modello = :id_modello";
+        $query = "INSERT INTO modifiche_in_sospeso (id_gruppo_modifica, tabella_destinazione, id_entita, campo_modificato, valore_nuovo, valore_vecchio, stato, autore) 
+                  VALUES (:id_gruppo_modifica, 'modello', :id_entita, :campo_modificato, :valore_nuovo, :valore_vecchio, 'In attesa', 'admin')";
         $stmt = $pdo->prepare($query);
-        $stmt->bindParam(':nome', $nome);
-        $stmt->bindParam(':tipo', $tipo);
-        $stmt->bindParam(':anno_inizio_produzione', $anno_inizio_produzione);
-        $stmt->bindParam(':anno_fine_produzione', $anno_fine_produzione);
-        $stmt->bindParam(':lunghezza', $lunghezza);
-        $stmt->bindParam(':larghezza', $larghezza);
-        $stmt->bindParam(':altezza', $altezza);
-        $stmt->bindParam(':peso', $peso);
-        $stmt->bindParam(':motorizzazione', $motorizzazione);
-        $stmt->bindParam(':velocita_massima', $velocita_massima);
-        $stmt->bindParam(':descrizione', $descrizione);
-        $stmt->bindParam(':totale_veicoli', $totale_veicoli);
-        $stmt->bindParam(':posti_seduti', $posti_seduti);
-        $stmt->bindParam(':posti_in_piedi', $posti_in_piedi);
-        $stmt->bindParam(':posti_carrozzine', $posti_carrozzine);
-        $stmt->bindParam(':id_modello', $id_modello, PDO::PARAM_INT);
 
-        $stmt->execute();
+        $campi = [
+            'nome' => [$nome, $modello['nome'] ?? null],
+            'tipo' => [$tipo, $modello['tipo'] ?? null],
+            'anno_inizio_produzione' => [$anno_inizio_produzione, $modello['anno_inizio_produzione'] ?? null],
+            'anno_fine_produzione' => [$anno_fine_produzione, $modello['anno_fine_produzione'] ?? null],
+            'lunghezza' => [$lunghezza, $modello['lunghezza'] ?? null],
+            'larghezza' => [$larghezza, $modello['larghezza'] ?? null],
+            'altezza' => [$altezza, $modello['altezza'] ?? null],
+            'peso' => [$peso, $modello['peso'] ?? null],
+            'motorizzazione' => [$motorizzazione, $modello['motorizzazione'] ?? null],
+            'velocita_massima' => [$velocita_massima, $modello['velocita_massima'] ?? null],
+            'descrizione' => [$descrizione, $modello['descrizione'] ?? null],
+            'totale_veicoli' => [$totale_veicoli, $modello['totale_veicoli'] ?? null],
+            'posti_seduti' => [$posti_seduti, $modello['posti_seduti'] ?? null],
+            'posti_in_piedi' => [$posti_in_piedi, $modello['posti_in_piedi'] ?? null],
+            'posti_carrozzine' => [$posti_carrozzine, $modello['posti_carrozzine'] ?? null],
+        ];
 
-        echo "Il modello è stato aggiornato con successo.";
+        foreach ($campi as $campo => [$valore_nuovo, $valore_vecchio]) {
+            $stmt->bindParam(':id_gruppo_modifica', $id_gruppo_modifica);
+            $stmt->bindParam(':id_entita', $id_modello, PDO::PARAM_INT);
+            $stmt->bindParam(':campo_modificato', $campo);
+            $stmt->bindParam(':valore_nuovo', $valore_nuovo);
+            $stmt->bindParam(':valore_vecchio', $valore_vecchio);
+            $stmt->execute();
+        }
+
+        echo "Le modifiche al modello sono state proposte con successo. In attesa di approvazione.";
     } catch (PDOException $e) {
-        echo "Errore nell'aggiornamento del modello: " . $e->getMessage();
+        echo "Errore nell'inserimento della modifica: " . $e->getMessage();
     }
 }
 ?>
