@@ -39,9 +39,9 @@ if (!$modello) {
                    class="btn btn-warning btn-sm d-inline-flex align-items-center">
                     <i class="fas fa-pencil-alt me-2"></i> Modifica
                 </a>
-                <a href="/Aggiunte/crea_variante_modello.php?id_base=<?php echo urlencode($modello['id_modello']); ?>" 
+                <a href="/Aggiunte/collega_variante_modello.php?id_base=<?php echo urlencode($modello['id_modello']); ?>" 
                    class="btn btn-success btn-sm d-inline-flex align-items-center">
-                    <i class="fas fa-plus me-2"></i> Crea Variante
+                    <i class="fas fa-link me-2"></i> Collega Variante
                 </a>
             </div>
         </div>
