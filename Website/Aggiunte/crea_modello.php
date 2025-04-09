@@ -19,7 +19,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $tipo = isset($_POST['tipo']) ? trim($_POST['tipo']) : null;
     $anno_inizio_produzione = isset($_POST['anno_inizio_produzione']) ? trim($_POST['anno_inizio_produzione']) : null;
     $anno_fine_produzione = isset($_POST['anno_fine_produzione']) ? trim($_POST['anno_fine_produzione']) : null;
-    $capienza = isset($_POST['capienza']) ? trim($_POST['capienza']) : null;
     $lunghezza = isset($_POST['lunghezza']) ? trim($_POST['lunghezza']) : null;
     $larghezza = isset($_POST['larghezza']) ? trim($_POST['larghezza']) : null;
     $altezza = isset($_POST['altezza']) ? trim($_POST['altezza']) : null;
@@ -47,14 +46,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     // Inseriamo i dati nella tabella `modello`
     try {
-        $query = "INSERT INTO modello (nome, tipo, anno_inizio_produzione, anno_fine_produzione, capienza, lunghezza, larghezza, altezza, peso, motorizzazione, velocita_massima, descrizione, totale_veicoli, posti_seduti, posti_in_piedi, posti_carrozzine) 
-                  VALUES (:nome, :tipo, :anno_inizio_produzione, :anno_fine_produzione, :capienza, :lunghezza, :larghezza, :altezza, :peso, :motorizzazione, :velocita_massima, :descrizione, :totale_veicoli, :posti_seduti, :posti_in_piedi, :posti_carrozzine)";
+        $query = "INSERT INTO modello (nome, tipo, anno_inizio_produzione, anno_fine_produzione, lunghezza, larghezza, altezza, peso, motorizzazione, velocita_massima, descrizione, totale_veicoli, posti_seduti, posti_in_piedi, posti_carrozzine) 
+                  VALUES (:nome, :tipo, :anno_inizio_produzione, :anno_fine_produzione, :lunghezza, :larghezza, :altezza, :peso, :motorizzazione, :velocita_massima, :descrizione, :totale_veicoli, :posti_seduti, :posti_in_piedi, :posti_carrozzine)";
         $stmt = $pdo->prepare($query);
         $stmt->bindParam(':nome', $nome);
         $stmt->bindParam(':tipo', $tipo);
         $stmt->bindParam(':anno_inizio_produzione', $anno_inizio_produzione);
         $stmt->bindParam(':anno_fine_produzione', $anno_fine_produzione);
-        $stmt->bindParam(':capienza', $capienza);
         $stmt->bindParam(':lunghezza', $lunghezza);
         $stmt->bindParam(':larghezza', $larghezza);
         $stmt->bindParam(':altezza', $altezza);
@@ -111,10 +109,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <div class="mb-3">
             <label for="anno_fine_produzione" class="form-label">Anno Fine Produzione</label>
             <input type="number" class="form-control" id="anno_fine_produzione" name="anno_fine_produzione" min="1900" max="2100">
-        </div>
-        <div class="mb-3">
-            <label for="capienza" class="form-label">Capienza</label>
-            <input type="number" class="form-control" id="capienza" name="capienza">
         </div>
         <div class="mb-3">
             <label for="lunghezza" class="form-label">Lunghezza (m)</label>
