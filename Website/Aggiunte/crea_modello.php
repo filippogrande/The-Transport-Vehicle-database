@@ -34,6 +34,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         die("Errore: Il nome del modello è obbligatorio.");
     }
 
+    // Completa l'anno con una data predefinita
+    if (!empty($anno_inizio_produzione)) {
+        $anno_inizio_produzione .= '-01-01';
+    }
+    if (!empty($anno_fine_produzione)) {
+        $anno_fine_produzione .= '-01-01';
+    }
+
     // Inseriamo i dati nella tabella `modello`
     try {
         $query = "INSERT INTO modello (nome, tipo, anno_inizio_produzione, anno_fine_produzione, capienza, lunghezza, larghezza, altezza, peso, motorizzazione, velocita_massima, descrizione, totale_veicoli) 
@@ -80,15 +88,23 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         </div>
         <div class="mb-3">
             <label for="tipo" class="form-label">Tipo</label>
-            <input type="text" class="form-control" id="tipo" name="tipo">
+            <select class="form-control" id="tipo" name="tipo">
+                <option value="">Seleziona un tipo</option>
+                <option value="Autobus">Autobus</option>
+                <option value="Tram">Tram</option>
+                <option value="Treno">Treno</option>
+                <option value="Metro">Metro</option>
+                <option value="Filobus">Filobus</option>
+                <option value="Altro">Altro</option>
+            </select>
         </div>
         <div class="mb-3">
             <label for="anno_inizio_produzione" class="form-label">Anno Inizio Produzione</label>
-            <input type="date" class="form-control" id="anno_inizio_produzione" name="anno_inizio_produzione">
+            <input type="number" class="form-control" id="anno_inizio_produzione" name="anno_inizio_produzione" min="1900" max="2100">
         </div>
         <div class="mb-3">
             <label for="anno_fine_produzione" class="form-label">Anno Fine Produzione</label>
-            <input type="date" class="form-control" id="anno_fine_produzione" name="anno_fine_produzione">
+            <input type="number" class="form-control" id="anno_fine_produzione" name="anno_fine_produzione" min="1900" max="2100">
         </div>
         <div class="mb-3">
             <label for="capienza" class="form-label">Capienza</label>
