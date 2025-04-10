@@ -174,6 +174,11 @@ try {
                     form.method = 'POST';
                     form.submit();
                     break;
+                case 'azienda_operatrice': // Aggiunto supporto per azienda_operatrice
+                    form.action = 'gestisci_azienda_operatrice.php';
+                    form.method = 'POST';
+                    form.submit();
+                    break;
                 // Aggiungi altri casi se necessario
                 default:
                     alert('Tabella non supportata');
