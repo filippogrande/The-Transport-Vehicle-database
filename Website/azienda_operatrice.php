@@ -26,7 +26,7 @@ try {
 
     // Rimuovi spazi e normalizza i dati vuoti
     foreach ($azienda as $key => $value) {
-        $azienda[$key] = !empty(trim($value)) ? $value : null;
+        $azienda[$key] = isset($value) && !empty(trim($value)) ? trim($value) : null;
     }
 } catch (PDOException $e) {
     die("Errore nel recupero dei dettagli dell'azienda operatrice: " . $e->getMessage());
