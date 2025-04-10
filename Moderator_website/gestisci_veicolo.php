@@ -91,19 +91,19 @@ try {
             // Accumula i dati delle modifiche nelle variabili
             switch ($campo_modificato) {
                 case 'id_modello':
-                    $id_modello = $valore_nuovo;
+                    $id_modello = !empty($valore_nuovo) ? (int)$valore_nuovo : null;
                     break;
                 case 'anno_produzione':
-                    $anno_produzione = $valore_nuovo;
+                    $anno_produzione = !empty($valore_nuovo) ? (int)$valore_nuovo : null;
                     break;
                 case 'numero_targa':
-                    $numero_targa = $valore_nuovo;
+                    $numero_targa = !empty($valore_nuovo) ? $valore_nuovo : null;
                     break;
                 case 'descrizione':
-                    $descrizione = $valore_nuovo;
+                    $descrizione = !empty($valore_nuovo) ? $valore_nuovo : null;
                     break;
                 case 'stato_veicolo':
-                    $stato_veicolo = $valore_nuovo;
+                    $stato_veicolo = !empty($valore_nuovo) ? $valore_nuovo : null;
                     break;
             }
         } else {
