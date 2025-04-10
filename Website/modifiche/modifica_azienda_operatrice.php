@@ -100,14 +100,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         ];
 
         foreach ($campi as $campo => [$valore_nuovo, $valore_vecchio]) {
-            if ($valore_nuovo !== $valore_vecchio) {
-                $stmt->bindParam(':id_gruppo_modifica', $id_gruppo_modifica);
-                $stmt->bindParam(':id_entita', $id_azienda_operatrice, PDO::PARAM_INT);
-                $stmt->bindParam(':campo_modificato', $campo);
-                $stmt->bindParam(':valore_nuovo', $valore_nuovo);
-                $stmt->bindParam(':valore_vecchio', $valore_vecchio);
-                $stmt->execute();
-            }
+            // Inserisci tutti i campi, anche quelli non modificati
+            $stmt->bindParam(':id_gruppo_modifica', $id_gruppo_modifica);
+            $stmt->bindParam(':id_entita', $id_azienda_operatrice, PDO::PARAM_INT);
+            $stmt->bindParam(':campo_modificato', $campo);
+            $stmt->bindParam(':valore_nuovo', $valore_nuovo);
+            $stmt->bindParam(':valore_vecchio', $valore_vecchio);
+            $stmt->execute();
         }
 
         echo "Le modifiche all'azienda operatrice sono state proposte con successo. In attesa di approvazione.";
