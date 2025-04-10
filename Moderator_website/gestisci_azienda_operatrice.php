@@ -154,11 +154,11 @@ try {
             $campi_modificati = [
                 'nome_precedente' => $nome_precedente !== null,
                 'sede_legale' => $sede_legale !== null,
-                'citta' => $città !== null, // Corretto il nome del parametro
+                'citta' => $città !== null,
                 'paese' => $paese !== null,
                 'numero_telefono' => $numero_telefono !== null,
                 'email' => $email !== null,
-                'data_inizio_attività' => $data_inizio_attività !== null,
+                'data_inizio_attivita' => $data_inizio_attività !== null, // Corretto il nome del parametro
                 'descrizione' => $descrizione !== null,
                 'foto_logo' => $foto_logo !== null,
                 'stato_azienda' => $stato_azienda !== null,
@@ -167,11 +167,11 @@ try {
             // Mantieni i valori esistenti solo per i campi non modificati
             $nome_precedente = $campi_modificati['nome_precedente'] ? $nome_precedente : $azienda['nome_precedente'];
             $sede_legale = $campi_modificati['sede_legale'] ? $sede_legale : $azienda['sede_legale'];
-            $citta = $campi_modificati['citta'] ? $città : $azienda['città']; // Corretto il nome del parametro
+            $citta = $campi_modificati['citta'] ? $città : $azienda['città'];
             $paese = $campi_modificati['paese'] ? $paese : $azienda['paese'];
             $numero_telefono = $campi_modificati['numero_telefono'] ? $numero_telefono : $azienda['numero_telefono'];
             $email = $campi_modificati['email'] ? $email : $azienda['email'];
-            $data_inizio_attività = $campi_modificati['data_inizio_attività'] ? $data_inizio_attività : $azienda['data_inizio_attività'];
+            $data_inizio_attivita = $campi_modificati['data_inizio_attivita'] ? $data_inizio_attività : $azienda['data_inizio_attività']; // Corretto il nome del parametro
             $descrizione = $campi_modificati['descrizione'] ? $descrizione : $azienda['descrizione'];
             $foto_logo = $campi_modificati['foto_logo'] ? $foto_logo : $azienda['foto_logo'];
             $stato_azienda = $campi_modificati['stato_azienda'] ? $stato_azienda : $azienda['stato_azienda'];
@@ -182,11 +182,11 @@ try {
                 SET 
                     nome_precedente = :nome_precedente,
                     sede_legale = :sede_legale,
-                    citta = :citta, -- Corretto il nome del parametro
+                    citta = :citta,
                     paese = :paese,
                     numero_telefono = :numero_telefono,
                     email = :email,
-                    data_inizio_attività = :data_inizio_attività,
+                    data_inizio_attivita = :data_inizio_attivita, -- Corretto il nome del parametro
                     descrizione = :descrizione,
                     foto_logo = :foto_logo,
                     stato_azienda = :stato_azienda
@@ -195,11 +195,11 @@ try {
             $update_stmt = $pdo->prepare($update_query);
             $update_stmt->bindParam(':nome_precedente', $nome_precedente);
             $update_stmt->bindParam(':sede_legale', $sede_legale);
-            $update_stmt->bindParam(':citta', $citta); // Corretto il nome del parametro
+            $update_stmt->bindParam(':citta', $citta);
             $update_stmt->bindParam(':paese', $paese);
             $update_stmt->bindParam(':numero_telefono', $numero_telefono);
             $update_stmt->bindParam(':email', $email);
-            $update_stmt->bindParam(':data_inizio_attività', $data_inizio_attività);
+            $update_stmt->bindParam(':data_inizio_attivita', $data_inizio_attivita); // Corretto il nome del parametro
             $update_stmt->bindParam(':descrizione', $descrizione);
             $update_stmt->bindParam(':foto_logo', $foto_logo);
             $update_stmt->bindParam(':stato_azienda', $stato_azienda);
@@ -216,18 +216,18 @@ try {
 
             // Inserisci una nuova azienda
             $insert_query = "
-                INSERT INTO azienda_operatrice (nome_azienda, nome_precedente, sede_legale, citta, paese, numero_telefono, email, data_inizio_attività, descrizione, foto_logo, stato_azienda)
-                VALUES (:nome_azienda, :nome_precedente, :sede_legale, :citta, :paese, :numero_telefono, :email, :data_inizio_attività, :descrizione, :foto_logo, :stato_azienda)
+                INSERT INTO azienda_operatrice (nome_azienda, nome_precedente, sede_legale, citta, paese, numero_telefono, email, data_inizio_attivita, descrizione, foto_logo, stato_azienda)
+                VALUES (:nome_azienda, :nome_precedente, :sede_legale, :citta, :paese, :numero_telefono, :email, :data_inizio_attivita, :descrizione, :foto_logo, :stato_azienda)
             ";
             $insert_stmt = $pdo->prepare($insert_query);
             $insert_stmt->bindParam(':nome_azienda', $nome_azienda);
             $insert_stmt->bindParam(':nome_precedente', $nome_precedente);
             $insert_stmt->bindParam(':sede_legale', $sede_legale);
-            $insert_stmt->bindParam(':citta', $citta); // Corretto il nome del parametro
+            $insert_stmt->bindParam(':citta', $citta);
             $insert_stmt->bindParam(':paese', $paese);
             $insert_stmt->bindParam(':numero_telefono', $numero_telefono);
             $insert_stmt->bindParam(':email', $email);
-            $insert_stmt->bindParam(':data_inizio_attività', $data_inizio_attività);
+            $insert_stmt->bindParam(':data_inizio_attivita', $data_inizio_attivita); // Corretto il nome del parametro
             $insert_stmt->bindParam(':descrizione', $descrizione);
             $insert_stmt->bindParam(':foto_logo', $foto_logo);
             $insert_stmt->bindParam(':stato_azienda', $stato_azienda);
