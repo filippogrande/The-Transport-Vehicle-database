@@ -184,6 +184,11 @@ try {
                     form.method = 'POST';
                     form.submit();
                     break;
+                case 'possesso_veicolo': // Nuovo caso per possesso_veicolo
+                    form.action = 'gestisci_possesso_veicolo.php';
+                    form.method = 'POST';
+                    form.submit();
+                    break;
                 // Aggiungi altri casi se necessario
                 default:
                     alert('Tabella non supportata');
