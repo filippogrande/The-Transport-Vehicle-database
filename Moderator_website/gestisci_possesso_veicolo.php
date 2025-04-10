@@ -62,7 +62,7 @@ try {
     $modifiche_valide = false; // Flag per verificare se ci sono modifiche valide
 
     // Campi validi per la tabella possesso_veicolo
-    $campi_validi = ['id_azienda_operatrice', 'data_inizio_possesso', 'data_fine_possesso', 'stato_veicolo_azienda'];
+    $campi_validi = ['id_veicolo', 'id_azienda_operatrice', 'data_inizio_possesso', 'data_fine_possesso', 'stato_veicolo_azienda'];
 
     // Cicla attraverso tutte le modifiche selezionate
     foreach ($modifiche_selezionate as $id_modifica) {
@@ -89,6 +89,9 @@ try {
 
             // Accumula i dati delle modifiche nelle variabili
             switch ($campo_modificato) {
+                case 'id_veicolo':
+                    $id_veicolo = $valore_nuovo;
+                    break;
                 case 'id_azienda_operatrice':
                     $id_azienda_operatrice = $valore_nuovo;
                     break;
@@ -114,7 +117,7 @@ try {
     }
 
     // Inserisci o aggiorna il possesso veicolo nel database
-    if ($id_azienda_operatrice) {
+    if ($id_veicolo && $id_azienda_operatrice) {
         // Inserisci un nuovo record nella tabella `possesso_veicolo`
         $insert_query = "
             INSERT INTO possesso_veicolo (id_veicolo, id_azienda_operatrice, data_inizio_possesso, data_fine_possesso, stato_veicolo_azienda)
@@ -128,13 +131,13 @@ try {
         $insert_stmt->bindParam(':stato_veicolo_azienda', $stato_veicolo_azienda);
 
         if ($insert_stmt->execute()) {
-            echo "<p style='color: green;'>Nuovo possesso veicolo creato con successo.</p>";
+            echo "<p style='color: green;'>Nuovo possesso veicolo creato con successo per il veicolo ID: $id_veicolo.</p>";
             eliminaModifiche($id_gruppo_modifica);
         } else {
             echo "<p style='color: red;'>Errore nell'inserimento: " . implode(", ", $insert_stmt->errorInfo()) . "</p>";
         }
     } else {
-        echo "<p style='color: red;'>Errore: ID dell'azienda operatrice non specificato. Impossibile procedere.</p>";
+        echo "<p style='color: red;'>Errore: ID del veicolo o dell'azienda operatrice non specificato. Impossibile procedere.</p>";
     }
 } catch (Exception $e) {
     echo "<p style='color: red;'>Errore: " . $e->getMessage() . "</p>";
