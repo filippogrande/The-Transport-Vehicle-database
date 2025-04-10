@@ -9,7 +9,7 @@ include 'header.html'; // Include l'header
 
 try {
     // Recupera tutte le aziende operatrici dal database
-    $query = "SELECT id_azienda_operatrice, nome_azienda, città, paese, stato_azienda, foto_logo FROM azienda_operatrice ORDER BY nome_azienda ASC";
+    $query = "SELECT id_azienda_operatrice, nome_azienda, citta, paese, stato_azienda, foto_logo FROM azienda_operatrice ORDER BY nome_azienda ASC";
     $stmt = $pdo->query($query);
     $aziende = $stmt->fetchAll(PDO::FETCH_ASSOC);
 } catch (PDOException $e) {
@@ -40,7 +40,7 @@ try {
                                     <?php echo htmlspecialchars($azienda['nome_azienda']); ?>
                                 </a>
                             </h5>
-                            <p class="card-text"><strong>Città:</strong> <?php echo htmlspecialchars($azienda['città'] ?? 'N/A'); ?></p>
+                            <p class="card-text"><strong>Città:</strong> <?php echo htmlspecialchars($azienda['citta'] ?? 'N/A'); ?></p>
                             <p class="card-text"><strong>Paese:</strong> <?php echo htmlspecialchars($azienda['paese'] ?? 'N/A'); ?></p>
                             <p class="card-text"><strong>Stato:</strong> <?php echo htmlspecialchars($azienda['stato_azienda'] ?? 'N/A'); ?></p>
                             <a href="/azienda_operatrice.php?id=<?php echo urlencode($azienda['id_azienda_operatrice']); ?>" class="btn btn-info btn-sm">Visualizza Dettagli</a>

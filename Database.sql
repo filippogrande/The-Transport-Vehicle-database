@@ -65,11 +65,11 @@ CREATE TABLE azienda_operatrice (
     nome_azienda VARCHAR(255) NOT NULL,           -- Nome dell'azienda
     nome_precedente VARCHAR(255),                 -- Nome precedente, se rinominata
     sede_legale VARCHAR(255),                     -- Sede legale
-    città VARCHAR(100),                           -- Città dell'azienda
+    citta VARCHAR(100),                           -- Città dell'azienda
     paese VARCHAR(100),                           -- Paese in cui opera l'azienda
     numero_telefono VARCHAR(20),                  -- Numero di telefono
     email VARCHAR(255),                           -- Email di contatto
-    data_inizio_attività DATE,                    -- Data di inizio attività
+    data_inizio_attivita DATE,                    -- Data di inizio attività
     descrizione TEXT,                             -- Descrizione dell'azienda
     foto_logo TEXT,                               -- BLOB
     stato_azienda stato_azienda_enum,    -- Stato dell'azienda
