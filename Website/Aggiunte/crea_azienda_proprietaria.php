@@ -58,6 +58,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $stmt = $pdo->prepare($query);
 
         $campi = [
+            'id_veicolo' => $id_veicolo, // Aggiunto l'ID del veicolo
             'id_azienda_operatrice' => $id_azienda_operatrice,
             'data_inizio_possesso' => $data_inizio_possesso,
             'data_fine_possesso' => $data_fine_possesso,
