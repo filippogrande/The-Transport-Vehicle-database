@@ -57,16 +57,23 @@ try {
     $nome_azienda = null;
     $nome_precedente = null;
     $sede_legale = null;
-    $città = null;
+    $citta = null;
     $paese = null;
     $numero_telefono = null;
     $email = null;
-    $data_inizio_attività = null;
+    $data_inizio_attivita = null;
     $descrizione = null;
     $foto_logo = null;
     $stato_azienda = null;
 
     $modifiche_valide = false; // Flag per verificare se ci sono modifiche valide
+
+    // Campi validi per la tabella azienda_operatrice
+    $campi_validi = [
+        'nome_azienda', 'nome_precedente', 'sede_legale', 'citta', 'paese',
+        'numero_telefono', 'email', 'data_inizio_attivita', 'descrizione',
+        'foto_logo', 'stato_azienda'
+    ];
 
     // Cicla attraverso tutte le modifiche selezionate
     foreach ($modifiche_selezionate as $id_modifica) {
@@ -80,10 +87,15 @@ try {
         $modifica = $stmt->fetch(PDO::FETCH_ASSOC);
 
         if ($modifica && $modifica['tabella_destinazione'] == 'azienda_operatrice') {
-            $modifiche_valide = true; // Imposta il flag a true
-            $id_entita = $modifica['id_entita'];
             $campo_modificato = $modifica['campo_modificato'];
             $valore_nuovo = $modifica['valore_nuovo'];
+
+            if (!in_array($campo_modificato, $campi_validi)) {
+                echo "<p style='color: red;'>Errore: Campo non valido ($campo_modificato).</p>";
+                continue;
+            }
+
+            $modifiche_valide = true; // Imposta il flag a true
             $id_gruppo_modifica = $modifica['id_gruppo_modifica'];
 
             // Accumula i dati delle modifiche nelle variabili
@@ -97,8 +109,8 @@ try {
                 case 'sede_legale':
                     $sede_legale = $valore_nuovo;
                     break;
-                case 'città':
-                    $città = $valore_nuovo;
+                case 'citta':
+                    $citta = $valore_nuovo;
                     break;
                 case 'paese':
                     $paese = $valore_nuovo;
@@ -109,8 +121,8 @@ try {
                 case 'email':
                     $email = $valore_nuovo;
                     break;
-                case 'data_inizio_attività':
-                    $data_inizio_attività = $valore_nuovo;
+                case 'data_inizio_attivita':
+                    $data_inizio_attivita = $valore_nuovo;
                     break;
                 case 'descrizione':
                     $descrizione = $valore_nuovo;
@@ -121,15 +133,9 @@ try {
                 case 'stato_azienda':
                     $stato_azienda = $valore_nuovo;
                     break;
-                default:
-                    echo "<p style='color: red;'>Errore: Campo non valido.</p>";
-                    continue;
             }
         } else {
             echo "<p style='color: red;'>Errore: Modifica non valida o tabella destinazione errata.</p>";
-            echo "<pre>Dettagli modifica non valida:";
-            print_r($modifica); // Mostra i dettagli dell'array $modifica
-            echo "</pre>";
         }
     }
 
@@ -139,108 +145,110 @@ try {
         exit; // Interrompi l'esecuzione
     }
 
+    // Dopo aver accumulato i dati, verifica se il nome dell'azienda è specificato
+    if (!$nome_azienda) {
+        echo "<p style='color: red;'>Errore: Nome dell'azienda non specificato. Impossibile procedere.</p>";
+        exit; // Interrompi l'esecuzione
+    }
+
     // Dopo aver accumulato i dati, verifica se l'azienda esiste
-    if ($nome_azienda) {
-        $check_query = "SELECT * FROM azienda_operatrice WHERE nome_azienda = :nome_azienda";
-        $check_stmt = $pdo->prepare($check_query);
-        $check_stmt->bindParam(':nome_azienda', $nome_azienda, PDO::PARAM_STR);
-        $check_stmt->execute();
-        $azienda = $check_stmt->fetch(PDO::FETCH_ASSOC);
+    $check_query = "SELECT * FROM azienda_operatrice WHERE nome_azienda = :nome_azienda";
+    $check_stmt = $pdo->prepare($check_query);
+    $check_stmt->bindParam(':nome_azienda', $nome_azienda, PDO::PARAM_STR);
+    $check_stmt->execute();
+    $azienda = $check_stmt->fetch(PDO::FETCH_ASSOC);
 
-        if ($azienda) {
-            echo "<p>Azienda trovata: {$azienda['nome_azienda']}</p>";
+    if ($azienda) {
+        echo "<p>Azienda trovata: {$azienda['nome_azienda']}</p>";
 
-            // Traccia i campi modificati
-            $campi_modificati = [
-                'nome_precedente' => $nome_precedente !== null,
-                'sede_legale' => $sede_legale !== null,
-                'citta' => $città !== null, // Corretto il nome del parametro
-                'paese' => $paese !== null,
-                'numero_telefono' => $numero_telefono !== null,
-                'email' => $email !== null,
-                'data_inizio_attivita' => $data_inizio_attività !== null,
-                'descrizione' => $descrizione !== null,
-                'foto_logo' => $foto_logo !== null,
-                'stato_azienda' => $stato_azienda !== null,
-            ];
+        // Traccia i campi modificati
+        $campi_modificati = [
+            'nome_precedente' => $nome_precedente !== null,
+            'sede_legale' => $sede_legale !== null,
+            'citta' => $citta !== null,
+            'paese' => $paese !== null,
+            'numero_telefono' => $numero_telefono !== null,
+            'email' => $email !== null,
+            'data_inizio_attivita' => $data_inizio_attivita !== null,
+            'descrizione' => $descrizione !== null,
+            'foto_logo' => $foto_logo !== null,
+            'stato_azienda' => $stato_azienda !== null,
+        ];
 
-            // Mantieni i valori esistenti solo per i campi non modificati
-            $nome_precedente = $campi_modificati['nome_precedente'] ? $nome_precedente : $azienda['nome_precedente'];
-            $sede_legale = $campi_modificati['sede_legale'] ? $sede_legale : $azienda['sede_legale'];
-            $citta = $campi_modificati['citta'] ? $città : $azienda['città']; // Corretto il nome del parametro
-            $paese = $campi_modificati['paese'] ? $paese : $azienda['paese'];
-            $numero_telefono = $campi_modificati['numero_telefono'] ? $numero_telefono : $azienda['numero_telefono'];
-            $email = $campi_modificati['email'] ? $email : $azienda['email'];
-            $data_inizio_attivita = $campi_modificati['data_inizio_attivita'] ? $data_inizio_attività : $azienda['data_inizio_attività'];
-            $descrizione = $campi_modificati['descrizione'] ? $descrizione : $azienda['descrizione'];
-            $foto_logo = $campi_modificati['foto_logo'] ? $foto_logo : $azienda['foto_logo'];
-            $stato_azienda = $campi_modificati['stato_azienda'] ? $stato_azienda : $azienda['stato_azienda'];
+        // Mantieni i valori esistenti solo per i campi non modificati
+        $nome_precedente = $campi_modificati['nome_precedente'] ? $nome_precedente : $azienda['nome_precedente'];
+        $sede_legale = $campi_modificati['sede_legale'] ? $sede_legale : $azienda['sede_legale'];
+        $citta = $campi_modificati['citta'] ? $citta : $azienda['citta'];
+        $paese = $campi_modificati['paese'] ? $paese : $azienda['paese'];
+        $numero_telefono = $campi_modificati['numero_telefono'] ? $numero_telefono : $azienda['numero_telefono'];
+        $email = $campi_modificati['email'] ? $email : $azienda['email'];
+        $data_inizio_attivita = $campi_modificati['data_inizio_attivita'] ? $data_inizio_attivita : $azienda['data_inizio_attivita'];
+        $descrizione = $campi_modificati['descrizione'] ? $descrizione : $azienda['descrizione'];
+        $foto_logo = $campi_modificati['foto_logo'] ? $foto_logo : $azienda['foto_logo'];
+        $stato_azienda = $campi_modificati['stato_azienda'] ? $stato_azienda : $azienda['stato_azienda'];
 
-            // Aggiorna i dati dell'azienda
-            $update_query = "
-                UPDATE azienda_operatrice 
-                SET 
-                    nome_precedente = :nome_precedente,
-                    sede_legale = :sede_legale,
-                    citta = :citta, -- Corretto il nome del parametro
-                    paese = :paese,
-                    numero_telefono = :numero_telefono,
-                    email = :email,
-                    data_inizio_attivita = :data_inizio_attivita,
-                    descrizione = :descrizione,
-                    foto_logo = :foto_logo,
-                    stato_azienda = :stato_azienda
-                WHERE nome_azienda = :nome_azienda
-            ";
-            $update_stmt = $pdo->prepare($update_query);
-            $update_stmt->bindParam(':nome_precedente', $nome_precedente);
-            $update_stmt->bindParam(':sede_legale', $sede_legale);
-            $update_stmt->bindParam(':citta', $citta); // Corretto il nome del parametro
-            $update_stmt->bindParam(':paese', $paese);
-            $update_stmt->bindParam(':numero_telefono', $numero_telefono);
-            $update_stmt->bindParam(':email', $email);
-            $update_stmt->bindParam(':data_inizio_attivita', $data_inizio_attivita);
-            $update_stmt->bindParam(':descrizione', $descrizione);
-            $update_stmt->bindParam(':foto_logo', $foto_logo);
-            $update_stmt->bindParam(':stato_azienda', $stato_azienda);
-            $update_stmt->bindParam(':nome_azienda', $nome_azienda);
+        // Aggiorna i dati dell'azienda
+        $update_query = "
+            UPDATE azienda_operatrice 
+            SET 
+                nome_precedente = :nome_precedente,
+                sede_legale = :sede_legale,
+                citta = :citta,
+                paese = :paese,
+                numero_telefono = :numero_telefono,
+                email = :email,
+                data_inizio_attivita = :data_inizio_attivita,
+                descrizione = :descrizione,
+                foto_logo = :foto_logo,
+                stato_azienda = :stato_azienda
+            WHERE nome_azienda = :nome_azienda
+        ";
+        $update_stmt = $pdo->prepare($update_query);
+        $update_stmt->bindParam(':nome_precedente', $nome_precedente);
+        $update_stmt->bindParam(':sede_legale', $sede_legale);
+        $update_stmt->bindParam(':citta', $citta);
+        $update_stmt->bindParam(':paese', $paese);
+        $update_stmt->bindParam(':numero_telefono', $numero_telefono);
+        $update_stmt->bindParam(':email', $email);
+        $update_stmt->bindParam(':data_inizio_attivita', $data_inizio_attivita);
+        $update_stmt->bindParam(':descrizione', $descrizione);
+        $update_stmt->bindParam(':foto_logo', $foto_logo);
+        $update_stmt->bindParam(':stato_azienda', $stato_azienda);
+        $update_stmt->bindParam(':nome_azienda', $nome_azienda);
 
-            if ($update_stmt->execute()) {
-                echo "<p style='color: green;'>Modifiche applicate con successo all'azienda: $nome_azienda.</p>";
-                eliminaModifiche($id_gruppo_modifica);
-            } else {
-                echo "<p style='color: red;'>Errore nell'aggiornamento: " . implode(", ", $update_stmt->errorInfo()) . "</p>";
-            }
+        if ($update_stmt->execute()) {
+            echo "<p style='color: green;'>Modifiche applicate con successo all'azienda: $nome_azienda.</p>";
+            eliminaModifiche($id_gruppo_modifica);
         } else {
-            echo "<p>Azienda non trovata. Creazione di una nuova entità...</p>";
-
-            // Inserisci una nuova azienda
-            $insert_query = "
-                INSERT INTO azienda_operatrice (nome_azienda, nome_precedente, sede_legale, citta, paese, numero_telefono, email, data_inizio_attivita, descrizione, foto_logo, stato_azienda)
-                VALUES (:nome_azienda, :nome_precedente, :sede_legale, :citta, :paese, :numero_telefono, :email, :data_inizio_attivita, :descrizione, :foto_logo, :stato_azienda)
-            ";
-            $insert_stmt = $pdo->prepare($insert_query);
-            $insert_stmt->bindParam(':nome_azienda', $nome_azienda);
-            $insert_stmt->bindParam(':nome_precedente', $nome_precedente);
-            $insert_stmt->bindParam(':sede_legale', $sede_legale);
-            $insert_stmt->bindParam(':citta', $citta); // Corretto il nome del parametro
-            $insert_stmt->bindParam(':paese', $paese);
-            $insert_stmt->bindParam(':numero_telefono', $numero_telefono);
-            $insert_stmt->bindParam(':email', $email);
-            $insert_stmt->bindParam(':data_inizio_attivita', $data_inizio_attivita);
-            $insert_stmt->bindParam(':descrizione', $descrizione);
-            $insert_stmt->bindParam(':foto_logo', $foto_logo);
-            $insert_stmt->bindParam(':stato_azienda', $stato_azienda);
-
-            if ($insert_stmt->execute()) {
-                echo "<p style='color: green;'>Nuova azienda creata con successo: $nome_azienda.</p>";
-                eliminaModifiche($id_gruppo_modifica);
-            } else {
-                echo "<p style='color: red;'>Errore nell'inserimento: " . implode(", ", $insert_stmt->errorInfo()) . "</p>";
-            }
+            echo "<p style='color: red;'>Errore nell'aggiornamento: " . implode(", ", $update_stmt->errorInfo()) . "</p>";
         }
     } else {
-        echo "<p style='color: red;'>Errore: Nome dell'azienda non specificato. Impossibile procedere.</p>";
+        echo "<p>Azienda non trovata. Creazione di una nuova entità...</p>";
+
+        // Inserisci una nuova azienda
+        $insert_query = "
+            INSERT INTO azienda_operatrice (nome_azienda, nome_precedente, sede_legale, citta, paese, numero_telefono, email, data_inizio_attivita, descrizione, foto_logo, stato_azienda)
+            VALUES (:nome_azienda, :nome_precedente, :sede_legale, :citta, :paese, :numero_telefono, :email, :data_inizio_attivita, :descrizione, :foto_logo, :stato_azienda)
+        ";
+        $insert_stmt = $pdo->prepare($insert_query);
+        $insert_stmt->bindParam(':nome_azienda', $nome_azienda);
+        $insert_stmt->bindParam(':nome_precedente', $nome_precedente);
+        $insert_stmt->bindParam(':sede_legale', $sede_legale);
+        $insert_stmt->bindParam(':citta', $citta);
+        $insert_stmt->bindParam(':paese', $paese);
+        $insert_stmt->bindParam(':numero_telefono', $numero_telefono);
+        $insert_stmt->bindParam(':email', $email);
+        $insert_stmt->bindParam(':data_inizio_attivita', $data_inizio_attivita);
+        $insert_stmt->bindParam(':descrizione', $descrizione);
+        $insert_stmt->bindParam(':foto_logo', $foto_logo);
+        $insert_stmt->bindParam(':stato_azienda', $stato_azienda);
+
+        if ($insert_stmt->execute()) {
+            echo "<p style='color: green;'>Nuova azienda creata con successo: $nome_azienda.</p>";
+            eliminaModifiche($id_gruppo_modifica);
+        } else {
+            echo "<p style='color: red;'>Errore nell'inserimento: " . implode(", ", $insert_stmt->errorInfo()) . "</p>";
+        }
     }
 } catch (Exception $e) {
     echo "<p style='color: red;'>Errore: " . $e->getMessage() . "</p>";
