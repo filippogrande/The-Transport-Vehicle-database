@@ -23,6 +23,11 @@ try {
     if (!$azienda) {
         die("Errore: Azienda operatrice non trovata.");
     }
+
+    // Rimuovi spazi e normalizza i dati vuoti
+    foreach ($azienda as $key => $value) {
+        $azienda[$key] = !empty(trim($value)) ? $value : null;
+    }
 } catch (PDOException $e) {
     die("Errore nel recupero dei dettagli dell'azienda operatrice: " . $e->getMessage());
 }
@@ -39,21 +44,21 @@ try {
             <?php endif; ?>
         </div>
         <div class="col-md-8">
-            <p><strong>Nome Precedente:</strong> <?php echo htmlspecialchars($azienda['nome_precedente'] ?? 'N/A'); ?></p>
-            <p><strong>Sede Legale:</strong> <?php echo htmlspecialchars($azienda['sede_legale'] ?? 'N/A'); ?></p>
-            <p><strong>Città:</strong> <?php echo htmlspecialchars($azienda['citta'] ?? 'N/A'); ?></p>
-            <p><strong>Paese:</strong> <?php echo htmlspecialchars($azienda['paese'] ?? 'N/A'); ?></p>
-            <p><strong>Numero di Telefono:</strong> <?php echo htmlspecialchars($azienda['numero_telefono'] ?? 'N/A'); ?></p>
+            <p><strong>Nome Precedente:</strong> <?php echo htmlspecialchars($azienda['nome_precedente'] ?? 'Non disponibile'); ?></p>
+            <p><strong>Sede Legale:</strong> <?php echo htmlspecialchars($azienda['sede_legale'] ?? 'Non disponibile'); ?></p>
+            <p><strong>Città:</strong> <?php echo htmlspecialchars($azienda['citta'] ?? 'Non disponibile'); ?></p>
+            <p><strong>Paese:</strong> <?php echo htmlspecialchars($azienda['paese'] ?? 'Non disponibile'); ?></p>
+            <p><strong>Numero di Telefono:</strong> <?php echo htmlspecialchars($azienda['numero_telefono'] ?? 'Non disponibile'); ?></p>
             <p><strong>Email:</strong> 
                 <?php if (!empty($azienda['email'])): ?>
                     <a href="mailto:<?php echo htmlspecialchars($azienda['email']); ?>"><?php echo htmlspecialchars($azienda['email']); ?></a>
                 <?php else: ?>
-                    N/A
+                    Non disponibile
                 <?php endif; ?>
             </p>
-            <p><strong>Data Inizio Attività:</strong> <?php echo htmlspecialchars($azienda['data_inizio_attivita'] ?? 'N/A'); ?></p>
-            <p><strong>Descrizione:</strong> <?php echo nl2br(htmlspecialchars($azienda['descrizione'] ?? 'N/A')); ?></p>
-            <p><strong>Stato:</strong> <?php echo htmlspecialchars($azienda['stato_azienda'] ?? 'N/A'); ?></p>
+            <p><strong>Data Inizio Attività:</strong> <?php echo htmlspecialchars($azienda['data_inizio_attivita'] ?? 'Non disponibile'); ?></p>
+            <p><strong>Descrizione:</strong> <?php echo nl2br(htmlspecialchars($azienda['descrizione'] ?? 'Non disponibile')); ?></p>
+            <p><strong>Stato:</strong> <?php echo htmlspecialchars($azienda['stato_azienda'] ?? 'Non disponibile'); ?></p>
         </div>
     </div>
     <div class="mt-4">
