@@ -21,11 +21,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $anno_produzione = trim($_POST['anno_produzione'] ?? null);
     $numero_targa = trim($_POST['numero_targa'] ?? null);
     $descrizione = trim($_POST['descrizione'] ?? null);
-    $stato_veicolo = trim($_POST['stato_veicolo'] ?? 'Attivo');
+    $stato_veicolo = trim($_POST['stato_veicolo'] ?? 'Attivo'); // Stato predefinito
 
     // Verifica che il modello sia stato selezionato
     if (empty($id_modello)) {
         die("Errore: È necessario selezionare un modello.");
+    }
+
+    // Verifica che lo stato del veicolo sia valido
+    $stati_validi = ['Attivo', 'Abbandonato', 'Demolito', 'Museo', 'Ceduto'];
+    if (!in_array($stato_veicolo, $stati_validi)) {
+        die("Errore: Stato del veicolo non valido.");
     }
 
     // ID gruppo modifica per raggruppare le modifiche
@@ -89,7 +95,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <input type="number" class="form-control" id="anno_produzione" name="anno_produzione" min="1900" max="2100">
         </div>
         <div class="mb-3">
-            <label for="numero_targa" class="form-label">Numero Targa</label>
+            <label for="numero_targa" class="form-label">Numero Targa o codice veicolo</label>
             <input type="text" class="form-control" id="numero_targa" name="numero_targa">
         </div>
         <div class="mb-3">
@@ -100,9 +106,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <label for="stato_veicolo" class="form-label">Stato del Veicolo</label>
             <select class="form-control" id="stato_veicolo" name="stato_veicolo">
                 <option value="Attivo">Attivo</option>
-                <option value="In manutenzione">In manutenzione</option>
-                <option value="Fuori servizio">Fuori servizio</option>
-                <option value="Rottamato">Rottamato</option>
+                <option value="Abbandonato">Abbandonato</option>
+                <option value="Demolito">Demolito</option>
+                <option value="Museo">Museo</option>
+                <option value="Ceduto">Ceduto</option>
             </select>
         </div>
         <button type="submit" class="btn btn-primary">Proponi Veicolo</button>

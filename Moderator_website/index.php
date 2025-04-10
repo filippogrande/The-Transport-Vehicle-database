@@ -179,6 +179,11 @@ try {
                     form.method = 'POST';
                     form.submit();
                     break;
+                case 'veicolo': // Nuovo caso per veicolo
+                    form.action = 'gestisci_veicolo.php';
+                    form.method = 'POST';
+                    form.submit();
+                    break;
                 // Aggiungi altri casi se necessario
                 default:
                     alert('Tabella non supportata');
