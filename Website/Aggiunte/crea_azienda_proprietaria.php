@@ -44,24 +44,39 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         die("Errore: È necessario selezionare un'azienda operatrice.");
     }
 
-    // Inserisci i dati nella tabella `possesso_veicolo`
+    // Normalizza le date vuote
+    $data_inizio_possesso = !empty($data_inizio_possesso) ? $data_inizio_possesso : null;
+    $data_fine_possesso = !empty($data_fine_possesso) ? $data_fine_possesso : null;
+
+    // ID gruppo modifica per tracciabilità
+    $id_gruppo_modifica = rand(1000, 9999);
+
+    // Inserisci i dati nella tabella `modifiche_in_sospeso`
     try {
-        $query = "
-            INSERT INTO possesso_veicolo (id_veicolo, id_azienda_operatrice, data_inizio_possesso, data_fine_possesso, stato_veicolo_azienda)
-            VALUES (:id_veicolo, :id_azienda_operatrice, :data_inizio_possesso, :data_fine_possesso, :stato_veicolo_azienda)
-        ";
+        $query = "INSERT INTO modifiche_in_sospeso (id_gruppo_modifica, tabella_destinazione, id_entita, campo_modificato, valore_nuovo, stato, autore) 
+                  VALUES (:id_gruppo_modifica, 'possesso_veicolo', :id_entita, :campo_modificato, :valore_nuovo, 'In attesa', 'admin')";
         $stmt = $pdo->prepare($query);
-        $stmt->bindParam(':id_veicolo', $id_veicolo, PDO::PARAM_INT);
-        $stmt->bindParam(':id_azienda_operatrice', $id_azienda_operatrice, PDO::PARAM_INT);
-        $stmt->bindParam(':data_inizio_possesso', $data_inizio_possesso);
-        $stmt->bindParam(':data_fine_possesso', $data_fine_possesso);
-        $stmt->bindParam(':stato_veicolo_azienda', $stato_veicolo_azienda);
 
-        $stmt->execute();
+        $campi = [
+            'id_azienda_operatrice' => $id_azienda_operatrice,
+            'data_inizio_possesso' => $data_inizio_possesso,
+            'data_fine_possesso' => $data_fine_possesso,
+            'stato_veicolo_azienda' => $stato_veicolo_azienda,
+        ];
 
-        echo "L'azienda proprietaria è stata aggiunta con successo.";
+        foreach ($campi as $campo => $valore_nuovo) {
+            if ($valore_nuovo !== null) {
+                $stmt->bindParam(':id_gruppo_modifica', $id_gruppo_modifica);
+                $stmt->bindParam(':id_entita', $id_veicolo, PDO::PARAM_INT);
+                $stmt->bindParam(':campo_modificato', $campo);
+                $stmt->bindParam(':valore_nuovo', $valore_nuovo);
+                $stmt->execute();
+            }
+        }
+
+        echo "L'azienda proprietaria è stata proposta con successo. In attesa di approvazione.";
     } catch (PDOException $e) {
-        echo "Errore nell'inserimento dell'azienda proprietaria: " . $e->getMessage();
+        echo "Errore nell'inserimento della proposta: " . $e->getMessage();
     }
 }
 ?>
@@ -107,7 +122,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <option value="Rottamato">Rottamato</option>
             </select>
         </div>
-        <button type="submit" class="btn btn-primary">Aggiungi Azienda Proprietaria</button>
+        <button type="submit" class="btn btn-primary">Proponi Azienda Proprietaria</button>
         <a href="../veicolo.php?id=<?php echo urlencode($id_veicolo); ?>" class="btn btn-secondary">Annulla</a>
     </form>
 </body>
