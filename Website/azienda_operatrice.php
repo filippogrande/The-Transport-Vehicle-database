@@ -61,8 +61,12 @@ try {
             <p><strong>Stato:</strong> <?php echo htmlspecialchars($azienda['stato_azienda'] ?? 'Non disponibile'); ?></p>
         </div>
     </div>
-    <div class="mt-4">
+    <div class="mt-4 d-flex justify-content-between">
         <a href="/aziende_operatrici.php" class="btn btn-secondary">Torna alla pagina Aziende Operatrici</a>
+        <a href="/modifiche/modifica_azienda_operatrice.php?id=<?php echo urlencode($id_azienda_operatrice); ?>" 
+           class="btn btn-warning d-flex align-items-center">
+            <i class="fas fa-pencil-alt me-2"></i> Modifica
+        </a>
     </div>
 </div>
 
