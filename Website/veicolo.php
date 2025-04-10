@@ -53,6 +53,10 @@ try {
            class="btn btn-warning d-flex align-items-center">
             <i class="fas fa-pencil-alt me-2"></i> Modifica
         </a>
+        <a href="/Aggiunte/crea_azienda_proprietaria.php?id_veicolo=<?php echo urlencode($veicolo['id_veicolo']); ?>" 
+           class="btn btn-success d-flex align-items-center">
+            <i class="fas fa-plus me-2"></i> Crea Azienda Proprietaria
+        </a>
     </div>
 </div>
 
