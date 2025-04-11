@@ -116,28 +116,45 @@ try {
         exit; // Interrompi l'esecuzione
     }
 
-    // Inserisci o aggiorna il possesso veicolo nel database
-    if ($id_veicolo && $id_azienda_operatrice) {
-        // Inserisci un nuovo record nella tabella `possesso_veicolo`
-        $insert_query = "
-            INSERT INTO possesso_veicolo (id_veicolo, id_azienda_operatrice, data_inizio_possesso, data_fine_possesso, stato_veicolo_azienda)
-            VALUES (:id_veicolo, :id_azienda_operatrice, :data_inizio_possesso, :data_fine_possesso, :stato_veicolo_azienda)
+    // Elimina l'entry se il nuovo valore di id_azienda_operatrice è null
+    if ($id_azienda_operatrice === null) {
+        $delete_query = "
+            DELETE FROM possesso_veicolo 
+            WHERE id_veicolo = :id_veicolo AND id_azienda_operatrice = :id_azienda_operatrice
         ";
-        $insert_stmt = $pdo->prepare($insert_query);
-        $insert_stmt->bindParam(':id_veicolo', $id_veicolo, PDO::PARAM_INT);
-        $insert_stmt->bindParam(':id_azienda_operatrice', $id_azienda_operatrice, PDO::PARAM_INT);
-        $insert_stmt->bindParam(':data_inizio_possesso', $data_inizio_possesso);
-        $insert_stmt->bindParam(':data_fine_possesso', $data_fine_possesso);
-        $insert_stmt->bindParam(':stato_veicolo_azienda', $stato_veicolo_azienda);
+        $delete_stmt = $pdo->prepare($delete_query);
+        $delete_stmt->bindParam(':id_veicolo', $id_veicolo, PDO::PARAM_INT);
+        $delete_stmt->bindParam(':id_azienda_operatrice', $modifica['valore_vecchio'], PDO::PARAM_INT);
 
-        if ($insert_stmt->execute()) {
-            echo "<p style='color: green;'>Nuovo possesso veicolo creato con successo per il veicolo ID: $id_veicolo.</p>";
+        if ($delete_stmt->execute()) {
+            echo "<p style='color: green;'>Possesso veicolo eliminato con successo per il veicolo ID: $id_veicolo.</p>";
             eliminaModifiche($id_gruppo_modifica);
         } else {
-            echo "<p style='color: red;'>Errore nell'inserimento: " . implode(", ", $insert_stmt->errorInfo()) . "</p>";
+            echo "<p style='color: red;'>Errore nell'eliminazione: " . implode(", ", $delete_stmt->errorInfo()) . "</p>";
         }
     } else {
-        echo "<p style='color: red;'>Errore: ID del veicolo o dell'azienda operatrice non specificato. Impossibile procedere.</p>";
+        // Inserisci o aggiorna il possesso veicolo nel database
+        if ($id_veicolo && $id_azienda_operatrice) {
+            $insert_query = "
+                INSERT INTO possesso_veicolo (id_veicolo, id_azienda_operatrice, data_inizio_possesso, data_fine_possesso, stato_veicolo_azienda)
+                VALUES (:id_veicolo, :id_azienda_operatrice, :data_inizio_possesso, :data_fine_possesso, :stato_veicolo_azienda)
+            ";
+            $insert_stmt = $pdo->prepare($insert_query);
+            $insert_stmt->bindParam(':id_veicolo', $id_veicolo, PDO::PARAM_INT);
+            $insert_stmt->bindParam(':id_azienda_operatrice', $id_azienda_operatrice, PDO::PARAM_INT);
+            $insert_stmt->bindParam(':data_inizio_possesso', $data_inizio_possesso);
+            $insert_stmt->bindParam(':data_fine_possesso', $data_fine_possesso);
+            $insert_stmt->bindParam(':stato_veicolo_azienda', $stato_veicolo_azienda);
+
+            if ($insert_stmt->execute()) {
+                echo "<p style='color: green;'>Nuovo possesso veicolo creato con successo per il veicolo ID: $id_veicolo.</p>";
+                eliminaModifiche($id_gruppo_modifica);
+            } else {
+                echo "<p style='color: red;'>Errore nell'inserimento: " . implode(", ", $insert_stmt->errorInfo()) . "</p>";
+            }
+        } else {
+            echo "<p style='color: red;'>Errore: ID del veicolo o dell'azienda operatrice non specificato. Impossibile procedere.</p>";
+        }
     }
 } catch (Exception $e) {
     echo "<p style='color: red;'>Errore: " . $e->getMessage() . "</p>";
