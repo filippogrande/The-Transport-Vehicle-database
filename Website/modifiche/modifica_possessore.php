@@ -40,12 +40,26 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         try {
             $id_gruppo_modifica = rand(1000, 9999);
 
-            $query = "INSERT INTO modifiche_in_sospeso (id_gruppo_modifica, tabella_destinazione, id_entita, campo_modificato, valore_nuovo, stato, autore) 
-                      VALUES (:id_gruppo_modifica, 'possesso_veicolo', :id_entita, 'eliminazione', 'richiesta', 'In attesa', 'admin')";
+            $campi = [
+                'data_inizio_possesso' => [null, $possesso['data_inizio_possesso']],
+                'data_fine_possesso' => [null, $possesso['data_fine_possesso']],
+                'stato_veicolo_azienda' => [null, $possesso['stato_veicolo_azienda']],
+                'id_azienda_operatrice' => [null, $id_azienda_operatrice],
+                'id_veicolo' => [null, $id_veicolo],
+            ];
+
+            $query = "INSERT INTO modifiche_in_sospeso (id_gruppo_modifica, tabella_destinazione, id_entita, campo_modificato, valore_nuovo, valore_vecchio, stato, autore) 
+                      VALUES (:id_gruppo_modifica, 'possesso_veicolo', :id_entita, :campo_modificato, :valore_nuovo, :valore_vecchio, 'In attesa', 'admin')";
             $stmt = $pdo->prepare($query);
-            $stmt->bindParam(':id_gruppo_modifica', $id_gruppo_modifica);
-            $stmt->bindParam(':id_entita', $id_veicolo, PDO::PARAM_INT);
-            $stmt->execute();
+
+            foreach ($campi as $campo => [$valore_nuovo, $valore_vecchio]) {
+                $stmt->bindParam(':id_gruppo_modifica', $id_gruppo_modifica);
+                $stmt->bindParam(':id_entita', $id_veicolo, PDO::PARAM_INT);
+                $stmt->bindParam(':campo_modificato', $campo);
+                $stmt->bindParam(':valore_nuovo', $valore_nuovo);
+                $stmt->bindParam(':valore_vecchio', $valore_vecchio);
+                $stmt->execute();
+            }
 
             echo "La richiesta di eliminazione del possesso è stata inviata con successo. In attesa di approvazione.";
         } catch (PDOException $e) {
