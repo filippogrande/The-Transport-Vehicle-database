@@ -28,6 +28,10 @@ try {
 <body class="container mt-4">
     <h1 class="mb-3">Visualizza Media</h1>
 
+    <div class="mb-4">
+        <a href="/Aggiunte/carica_media.php" class="btn btn-primary">Carica Nuovo Media</a>
+    </div>
+
     <?php if (!empty($media)): ?>
         <div class="row">
             <?php foreach ($media as $item): ?>
