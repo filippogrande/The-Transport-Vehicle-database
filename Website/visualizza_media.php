@@ -55,6 +55,7 @@ try {
                             <p class="card-text"><strong>Copyright:</strong> <?php echo htmlspecialchars($item['copyright'] ?? 'Non specificato'); ?></p>
                             <p class="card-text"><strong>Licenza:</strong> <?php echo htmlspecialchars($item['licenza']); ?></p>
                             <p class="card-text"><strong>Data Caricamento:</strong> <?php echo htmlspecialchars($item['data_caricamento']); ?></p>
+                            <a href="/modifiche/modifica_media.php?id=<?php echo urlencode($item['id_media']); ?>" class="btn btn-warning">Modifica Media</a>
                         </div>
                     </div>
                 </div>
