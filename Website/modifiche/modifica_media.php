@@ -175,9 +175,14 @@ function convertiHeicInJpeg($inputPath, $outputPath) {
         <div class="mb-3">
             <label for="licenza" class="form-label">Licenza</label>
             <select class="form-control" id="licenza" name="licenza" required>
-                <option value="Pubblico dominio" <?= $media['licenza'] === 'Pubblico dominio' ? 'selected' : '' ?>>Pubblico dominio</option>
-                <option value="Creative Commons" <?= $media['licenza'] === 'Creative Commons' ? 'selected' : '' ?>>Creative Commons</option>
-                <option value="Proprietario" <?= $media['licenza'] === 'Proprietario' ? 'selected' : '' ?>>Proprietario</option>
+                <option value="CC BY" <?= $media['licenza'] === 'CC BY' ? 'selected' : '' ?>>CC BY</option>
+                <option value="CC BY-SA" <?= $media['licenza'] === 'CC BY-SA' ? 'selected' : '' ?>>CC BY-SA</option>
+                <option value="CC BY-ND" <?= $media['licenza'] === 'CC BY-ND' ? 'selected' : '' ?>>CC BY-ND</option>
+                <option value="CC BY-NC" <?= $media['licenza'] === 'CC BY-NC' ? 'selected' : '' ?>>CC BY-NC</option>
+                <option value="CC BY-NC-SA" <?= $media['licenza'] === 'CC BY-NC-SA' ? 'selected' : '' ?>>CC BY-NC-SA</option>
+                <option value="CC BY-NC-ND" <?= $media['licenza'] === 'CC BY-NC-ND' ? 'selected' : '' ?>>CC BY-NC-ND</option>
+                <option value="CC0" <?= $media['licenza'] === 'CC0' ? 'selected' : '' ?>>CC0</option>
+                <option value="CC PDM" <?= $media['licenza'] === 'CC PDM' ? 'selected' : '' ?>>CC PDM</option>
             </select>
         </div>
         <button type="submit" class="btn btn-primary">Proponi Modifiche</button>
