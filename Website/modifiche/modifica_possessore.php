@@ -35,40 +35,58 @@ try {
 }
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    // Ottieni i dati inviati dal form
-    $data_inizio_possesso = trim($_POST['data_inizio_possesso'] ?? null);
-    $data_fine_possesso = trim($_POST['data_fine_possesso'] ?? null);
-    $stato_veicolo_azienda = trim($_POST['stato_veicolo_azienda'] ?? null);
+    if (isset($_POST['elimina_possesso'])) {
+        // Richiesta di eliminazione del possesso
+        try {
+            $id_gruppo_modifica = rand(1000, 9999);
 
-    // ID gruppo modifica per tracciabilità
-    $id_gruppo_modifica = rand(1000, 9999);
+            $query = "INSERT INTO modifiche_in_sospeso (id_gruppo_modifica, tabella_destinazione, id_entita, campo_modificato, valore_nuovo, stato, autore) 
+                      VALUES (:id_gruppo_modifica, 'possesso_veicolo', :id_entita, 'eliminazione', 'richiesta', 'In attesa', 'admin')";
+            $stmt = $pdo->prepare($query);
+            $stmt->bindParam(':id_gruppo_modifica', $id_gruppo_modifica);
+            $stmt->bindParam(':id_entita', $id_veicolo, PDO::PARAM_INT);
+            $stmt->execute();
 
-    // Inserisci i dati nella tabella `modifiche_in_sospeso`
-    try {
-        $query = "INSERT INTO modifiche_in_sospeso (id_gruppo_modifica, tabella_destinazione, id_entita, campo_modificato, valore_nuovo, valore_vecchio, stato, autore) 
-                  VALUES (:id_gruppo_modifica, 'possesso_veicolo', :id_entita, :campo_modificato, :valore_nuovo, :valore_vecchio, 'In attesa', 'admin')";
-        $stmt = $pdo->prepare($query);
-
-        $campi = [
-            'data_inizio_possesso' => [$data_inizio_possesso, $possesso['data_inizio_possesso']],
-            'data_fine_possesso' => [$data_fine_possesso, $possesso['data_fine_possesso']],
-            'stato_veicolo_azienda' => [$stato_veicolo_azienda, $possesso['stato_veicolo_azienda']],
-        ];
-
-        foreach ($campi as $campo => [$valore_nuovo, $valore_vecchio]) {
-            if ($valore_nuovo !== $valore_vecchio) {
-                $stmt->bindParam(':id_gruppo_modifica', $id_gruppo_modifica);
-                $stmt->bindParam(':id_entita', $id_veicolo, PDO::PARAM_INT);
-                $stmt->bindParam(':campo_modificato', $campo);
-                $stmt->bindParam(':valore_nuovo', $valore_nuovo);
-                $stmt->bindParam(':valore_vecchio', $valore_vecchio);
-                $stmt->execute();
-            }
+            echo "La richiesta di eliminazione del possesso è stata inviata con successo. In attesa di approvazione.";
+        } catch (PDOException $e) {
+            echo "Errore nell'inserimento della richiesta di eliminazione: " . $e->getMessage();
         }
+    } else {
+        // Ottieni i dati inviati dal form
+        $data_inizio_possesso = trim($_POST['data_inizio_possesso'] ?? null);
+        $data_fine_possesso = trim($_POST['data_fine_possesso'] ?? null);
+        $stato_veicolo_azienda = trim($_POST['stato_veicolo_azienda'] ?? null);
 
-        echo "Le modifiche al possesso sono state proposte con successo. In attesa di approvazione.";
-    } catch (PDOException $e) {
-        echo "Errore nell'inserimento della modifica: " . $e->getMessage();
+        // ID gruppo modifica per tracciabilità
+        $id_gruppo_modifica = rand(1000, 9999);
+
+        // Inserisci i dati nella tabella `modifiche_in_sospeso`
+        try {
+            $query = "INSERT INTO modifiche_in_sospeso (id_gruppo_modifica, tabella_destinazione, id_entita, campo_modificato, valore_nuovo, valore_vecchio, stato, autore) 
+                      VALUES (:id_gruppo_modifica, 'possesso_veicolo', :id_entita, :campo_modificato, :valore_nuovo, :valore_vecchio, 'In attesa', 'admin')";
+            $stmt = $pdo->prepare($query);
+
+            $campi = [
+                'data_inizio_possesso' => [$data_inizio_possesso, $possesso['data_inizio_possesso']],
+                'data_fine_possesso' => [$data_fine_possesso, $possesso['data_fine_possesso']],
+                'stato_veicolo_azienda' => [$stato_veicolo_azienda, $possesso['stato_veicolo_azienda']],
+            ];
+
+            foreach ($campi as $campo => [$valore_nuovo, $valore_vecchio]) {
+                if ($valore_nuovo !== $valore_vecchio) {
+                    $stmt->bindParam(':id_gruppo_modifica', $id_gruppo_modifica);
+                    $stmt->bindParam(':id_entita', $id_veicolo, PDO::PARAM_INT);
+                    $stmt->bindParam(':campo_modificato', $campo);
+                    $stmt->bindParam(':valore_nuovo', $valore_nuovo);
+                    $stmt->bindParam(':valore_vecchio', $valore_vecchio);
+                    $stmt->execute();
+                }
+            }
+
+            echo "Le modifiche al possesso sono state proposte con successo. In attesa di approvazione.";
+        } catch (PDOException $e) {
+            echo "Errore nell'inserimento della modifica: " . $e->getMessage();
+        }
     }
 }
 ?>
@@ -103,8 +121,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <option value="Rottamato" <?php echo ($possesso['stato_veicolo_azienda'] === 'Rottamato') ? 'selected' : ''; ?>>Rottamato</option>
             </select>
         </div>
-        <button type="submit" class="btn btn-primary">Proponi Modifiche</button>
-        <a href="../veicolo.php?id=<?php echo urlencode($id_veicolo); ?>" class="btn btn-secondary">Annulla</a>
+        <div class="d-flex justify-content-between">
+            <button type="submit" class="btn btn-primary">Proponi Modifiche</button>
+            <button type="submit" name="elimina_possesso" class="btn btn-danger">Richiedi Eliminazione</button>
+            <a href="../veicolo.php?id=<?php echo urlencode($id_veicolo); ?>" class="btn btn-secondary">Annulla</a>
+        </div>
     </form>
 </body>
 </html>
