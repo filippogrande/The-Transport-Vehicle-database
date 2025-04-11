@@ -37,35 +37,85 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     // Controlla se il file è valido in base al tipo di media
     $estensione = strtolower(pathinfo($percorso_destinazione, PATHINFO_EXTENSION));
-    $tipi_validi = ($tipo_media === 'Immagine') ? ['jpg', 'jpeg', 'png', 'gif'] :
+    $tipi_validi = ($tipo_media === 'Immagine') ? ['jpg', 'jpeg', 'png', 'gif', 'heic'] :
                    (($tipo_media === 'Video') ? ['mp4', 'webm', 'ogg'] : ['pdf', 'doc', 'docx', 'txt']);
 
     if (!in_array($estensione, $tipi_validi)) {
         die("Errore: Formato file non valido per il tipo di media selezionato.");
     }
 
-    // Sposta il file nella directory di destinazione
-    if (!move_uploaded_file($_FILES['file_media']['tmp_name'], $percorso_destinazione)) {
-        die("Errore nel salvataggio del file. Verifica i permessi della directory.");
+    // Gestione dei file HEIC
+    if ($estensione === 'heic') {
+        $nome_file_senza_estensione = pathinfo($nome_file, PATHINFO_FILENAME);
+        $percorso_destinazione = $base_dir . $nome_file_senza_estensione . '.jpeg';
+
+        // Converti il file HEIC in JPEG
+        if (!convertiHeicInJpeg($_FILES['file_media']['tmp_name'], $percorso_destinazione)) {
+            die("Errore nella conversione del file HEIC in JPEG.");
+        }
+    } else {
+        // Sposta il file nella directory di destinazione
+        if (!move_uploaded_file($_FILES['file_media']['tmp_name'], $percorso_destinazione)) {
+            die("Errore nel salvataggio del file. Verifica i permessi della directory.");
+        }
     }
 
-    // Inserisci i dati nella tabella `media`
+    // Inserisci i dati nella tabella `modifiche_in_sospeso`
     try {
+        $id_gruppo_modifica = rand(1000, 9999); // ID gruppo modifica per tracciabilità
+
         $query = "
-            INSERT INTO media (tipo_media, url_media, descrizione, copyright, licenza) 
-            VALUES (:tipo_media, :url_media, :descrizione, :copyright, :licenza)
+            INSERT INTO modifiche_in_sospeso (id_gruppo_modifica, tabella_destinazione, campo_modificato, valore_nuovo, stato, autore) 
+            VALUES (:id_gruppo_modifica, 'media', :campo_modificato, :valore_nuovo, 'In attesa', 'admin')
         ";
         $stmt = $pdo->prepare($query);
-        $stmt->bindParam(':tipo_media', $tipo_media);
-        $stmt->bindParam(':url_media', $percorso_destinazione);
-        $stmt->bindParam(':descrizione', $descrizione);
-        $stmt->bindParam(':copyright', $copyright);
-        $stmt->bindParam(':licenza', $licenza);
-        $stmt->execute();
 
-        echo "Il file è stato caricato con successo.";
+        $campi = [
+            'tipo_media' => $tipo_media,
+            'url_media' => $percorso_destinazione,
+            'descrizione' => $descrizione,
+            'copyright' => $copyright,
+            'licenza' => $licenza,
+        ];
+
+        foreach ($campi as $campo => $valore_nuovo) {
+            if ($valore_nuovo !== null) {
+                $stmt->bindParam(':id_gruppo_modifica', $id_gruppo_modifica);
+                $stmt->bindParam(':campo_modificato', $campo);
+                $stmt->bindParam(':valore_nuovo', $valore_nuovo);
+                $stmt->execute();
+            }
+        }
+
+        echo "Il file è stato proposto con successo. In attesa di approvazione.";
     } catch (PDOException $e) {
-        echo "Errore nell'inserimento dei dati: " . $e->getMessage();
+        echo "Errore nell'inserimento della proposta: " . $e->getMessage();
+    }
+}
+
+/**
+ * Converte un file HEIC in JPEG.
+ *
+ * @param string $inputPath Percorso del file HEIC di input.
+ * @param string $outputPath Percorso del file JPEG di output.
+ * @return bool True se la conversione ha successo, False altrimenti.
+ */
+function convertiHeicInJpeg($inputPath, $outputPath) {
+    if (!extension_loaded('imagick')) {
+        die("Errore: L'estensione Imagick non è abilitata sul server.");
+    }
+
+    try {
+        $imagick = new Imagick();
+        $imagick->readImage($inputPath);
+        $imagick->setImageFormat('jpeg');
+        $imagick->writeImage($outputPath);
+        $imagick->clear();
+        $imagick->destroy();
+        return true;
+    } catch (Exception $e) {
+        error_log("Errore nella conversione HEIC: " . $e->getMessage());
+        return false;
     }
 }
 ?>
