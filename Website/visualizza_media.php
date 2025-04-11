@@ -3,9 +3,9 @@ ini_set('display_errors', 1);
 error_reporting(E_ALL);
 
 // Correggi il percorso per includere correttamente dbconnect.php
-require_once __DIR__ . '/Utilities/dbconnect.php'; // Connessione al database con PDO
+require_once __DIR__ . 'Utilities/dbconnect.php'; // Connessione al database con PDO
 
-include '/header.html'; // Include l'header
+include 'header.html'; // Include l'header
 
 try {
     // Recupera tutti i media dalla tabella `media`
