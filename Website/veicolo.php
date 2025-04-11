@@ -31,6 +31,24 @@ try {
 } catch (PDOException $e) {
     die("Errore nel recupero dei dettagli del veicolo: " . $e->getMessage());
 }
+
+try {
+    // Recupera i dettagli delle aziende che hanno posseduto il veicolo
+    $query_possessi = "
+        SELECT p.data_inizio_possesso, p.data_fine_possesso, p.stato_veicolo_azienda, 
+               a.nome_azienda 
+        FROM possesso_veicolo p
+        INNER JOIN azienda_operatrice a ON p.id_azienda_operatrice = a.id_azienda_operatrice
+        WHERE p.id_veicolo = :id_veicolo
+        ORDER BY p.data_inizio_possesso ASC
+    ";
+    $stmt_possessi = $pdo->prepare($query_possessi);
+    $stmt_possessi->bindParam(':id_veicolo', $id_veicolo, PDO::PARAM_INT);
+    $stmt_possessi->execute();
+    $possessi = $stmt_possessi->fetchAll(PDO::FETCH_ASSOC);
+} catch (PDOException $e) {
+    die("Errore nel recupero dei dati di possesso: " . $e->getMessage());
+}
 ?>
 
 <div class="container mt-4">
@@ -47,6 +65,33 @@ try {
             <p><strong>Descrizione:</strong> <?php echo nl2br(htmlspecialchars($veicolo['descrizione'] ?? 'Non disponibile')); ?></p>
         </div>
     </div>
+
+    <h2 class="mt-5">Storico Possessori</h2>
+    <?php if (!empty($possessi)): ?>
+        <table class="table table-bordered mt-3">
+            <thead class="table-dark">
+                <tr>
+                    <th>Azienda</th>
+                    <th>Data Inizio Possesso</th>
+                    <th>Data Fine Possesso</th>
+                    <th>Stato del Veicolo</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php foreach ($possessi as $possesso): ?>
+                    <tr>
+                        <td><?php echo htmlspecialchars($possesso['nome_azienda']); ?></td>
+                        <td><?php echo htmlspecialchars($possesso['data_inizio_possesso'] ?? 'Non disponibile'); ?></td>
+                        <td><?php echo htmlspecialchars($possesso['data_fine_possesso'] ?? 'In corso'); ?></td>
+                        <td><?php echo htmlspecialchars($possesso['stato_veicolo_azienda'] ?? 'Non disponibile'); ?></td>
+                    </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
+    <?php else: ?>
+        <p>Non ci sono dati di possesso disponibili per questo veicolo.</p>
+    <?php endif; ?>
+
     <div class="mt-4 d-flex justify-content-between">
         <a href="/veicoli.php" class="btn btn-secondary">Torna alla pagina Veicoli</a>
         <a href="/modifiche/modifica_veicolo.php?id=<?php echo urlencode($veicolo['id_veicolo']); ?>" 
