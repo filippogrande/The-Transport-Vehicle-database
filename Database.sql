@@ -3,7 +3,16 @@ CREATE TYPE tipo_modello_enum AS ENUM ('Autobus', 'Tram', 'Treno', 'Metro', 'Fil
 CREATE TYPE stato_veicolo_enum AS ENUM ('Attivo', 'Abbandonato', 'Demolito', 'Museo', 'Ceduto');
 CREATE TYPE stato_possesso_enum AS ENUM ('Attivo', 'Deposito indefinito', 'Venduto');
 CREATE TYPE tipo_media_enum AS ENUM ('Immagine', 'Video', 'Documento');
-CREATE TYPE licenza_media_enum AS ENUM ('Pubblico dominio', 'Creative Commons', 'Proprietario');
+CREATE TYPE licenza_media_enum AS ENUM (
+    'CC BY', 
+    'CC BY-SA', 
+    'CC BY-ND', 
+    'CC BY-NC', 
+    'CC BY-NC-SA', 
+    'CC BY-NC-ND', 
+    'CC0', 
+    'CC PDM'
+);
 CREATE TYPE stato_modifica_enum AS ENUM ('In attesa', 'Approvato', 'Rifiutato');
 
 CREATE TABLE nazione (
