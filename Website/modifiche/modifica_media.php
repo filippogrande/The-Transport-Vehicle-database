@@ -172,6 +172,32 @@ function convertiHeicInJpeg($inputPath, $outputPath) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Modifica Media</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <script>
+        async function aggiornaEntitaDropdown(index) {
+            const tipoEntita = document.getElementById(`entita_tipo_${index}`).value;
+            const dropdown = document.getElementById(`entita_id_${index}`);
+
+            if (!tipoEntita) {
+                dropdown.innerHTML = '<option value="">Seleziona un\'entità</option>';
+                return;
+            }
+
+            try {
+                const response = await fetch(`/Utilities/get_entita.php?tabella=${tipoEntita}`);
+                const entita = await response.json();
+
+                dropdown.innerHTML = '<option value="">Seleziona un\'entità</option>';
+                entita.forEach(item => {
+                    const option = document.createElement('option');
+                    option.value = item.id;
+                    option.textContent = item.nome;
+                    dropdown.appendChild(option);
+                });
+            } catch (error) {
+                console.error('Errore nel caricamento delle entità:', error);
+            }
+        }
+    </script>
 </head>
 <body class="container mt-4">
     <h1 class="mb-3">Modifica Media</h1>
@@ -216,15 +242,17 @@ function convertiHeicInJpeg($inputPath, $outputPath) {
         <div id="entita-container">
             <div class="entita-row mb-3">
                 <label for="entita_tipo_1" class="form-label">Tipo di Entità</label>
-                <select class="form-control" id="entita_tipo_1" name="entita_collegate[0][entita_tipo]" required>
+                <select class="form-control" id="entita_tipo_1" name="entita_collegate[0][entita_tipo]" onchange="aggiornaEntitaDropdown(1)" required>
                     <option value="">Seleziona un tipo</option>
                     <option value="modello">Modello</option>
                     <option value="veicolo">Veicolo</option>
                     <option value="azienda_operatrice">Azienda Operatrice</option>
                     <option value="azienda_costruttrice">Azienda Costruttrice</option>
                 </select>
-                <label for="entita_id_1" class="form-label mt-2">ID Entità</label>
-                <input type="number" class="form-control" id="entita_id_1" name="entita_collegate[0][id_entita]" required>
+                <label for="entita_id_1" class="form-label mt-2">Entità</label>
+                <select class="form-control" id="entita_id_1" name="entita_collegate[0][id_entita]" required>
+                    <option value="">Seleziona un'entità</option>
+                </select>
                 <label for="entita_ruolo_1" class="form-label mt-2">Ruolo</label>
                 <input type="text" class="form-control" id="entita_ruolo_1" name="entita_collegate[0][ruolo]" placeholder="Es. Proprietario, Costruttore">
             </div>
@@ -244,15 +272,17 @@ function convertiHeicInJpeg($inputPath, $outputPath) {
             newRow.className = 'entita-row mb-3';
             newRow.innerHTML = `
                 <label for="entita_tipo_${entitaCounter}" class="form-label">Tipo di Entità</label>
-                <select class="form-control" id="entita_tipo_${entitaCounter}" name="entita_collegate[${entitaCounter}][entita_tipo]" required>
+                <select class="form-control" id="entita_tipo_${entitaCounter}" name="entita_collegate[${entitaCounter}][entita_tipo]" onchange="aggiornaEntitaDropdown(${entitaCounter})" required>
                     <option value="">Seleziona un tipo</option>
                     <option value="modello">Modello</option>
                     <option value="veicolo">Veicolo</option>
                     <option value="azienda_operatrice">Azienda Operatrice</option>
                     <option value="azienda_costruttrice">Azienda Costruttrice</option>
                 </select>
-                <label for="entita_id_${entitaCounter}" class="form-label mt-2">ID Entità</label>
-                <input type="number" class="form-control" id="entita_id_${entitaCounter}" name="entita_collegate[${entitaCounter}][id_entita]" required>
+                <label for="entita_id_${entitaCounter}" class="form-label mt-2">Entità</label>
+                <select class="form-control" id="entita_id_${entitaCounter}" name="entita_collegate[${entitaCounter}][id_entita]" required>
+                    <option value="">Seleziona un'entità</option>
+                </select>
                 <label for="entita_ruolo_${entitaCounter}" class="form-label mt-2">Ruolo</label>
                 <input type="text" class="form-control" id="entita_ruolo_${entitaCounter}" name="entita_collegate[${entitaCounter}][ruolo]" placeholder="Es. Proprietario, Costruttore">
             `;
