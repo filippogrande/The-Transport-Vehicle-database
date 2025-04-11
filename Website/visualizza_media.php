@@ -2,7 +2,8 @@
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
 
-require_once '../Utilities/dbconnect.php'; // Connessione al database con PDO
+// Correggi il percorso per includere correttamente dbconnect.php
+require_once __DIR__ . '/Utilities/dbconnect.php'; // Connessione al database con PDO
 
 include '../header.html'; // Include l'header
 
