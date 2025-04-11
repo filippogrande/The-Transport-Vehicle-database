@@ -110,6 +110,32 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     } catch (PDOException $e) {
         echo "Errore nell'inserimento della modifica: " . $e->getMessage();
     }
+
+    // Inserisci i collegamenti alle entità nella tabella `modifiche_in_sospeso`
+    $entita_collegate = $_POST['entita_collegate'] ?? [];
+    try {
+        foreach ($entita_collegate as $entita) {
+            $query_entita = "
+                INSERT INTO modifiche_in_sospeso (id_gruppo_modifica, tabella_destinazione, campo_modificato, valore_nuovo, stato, autore) 
+                VALUES (:id_gruppo_modifica, 'media_entita', :campo_modificato, :valore_nuovo, 'In attesa', 'admin')
+            ";
+            $stmt_entita = $pdo->prepare($query_entita);
+
+            $valore_nuovo = json_encode([
+                'id_media' => $id_media,
+                'entita_tipo' => $entita['entita_tipo'],
+                'id_entita' => $entita['id_entita'],
+                'ruolo' => $entita['ruolo']
+            ]);
+
+            $stmt_entita->bindParam(':id_gruppo_modifica', $id_gruppo_modifica);
+            $stmt_entita->bindParam(':campo_modificato', $entita['entita_tipo']);
+            $stmt_entita->bindParam(':valore_nuovo', $valore_nuovo);
+            $stmt_entita->execute();
+        }
+    } catch (PDOException $e) {
+        echo "Errore nell'inserimento dei collegamenti alle entità: " . $e->getMessage();
+    }
 }
 
 /**
@@ -185,8 +211,54 @@ function convertiHeicInJpeg($inputPath, $outputPath) {
                 <option value="CC PDM" <?= $media['licenza'] === 'CC PDM' ? 'selected' : '' ?>>CC PDM</option>
             </select>
         </div>
+
+        <h3 class="mt-4">Collega Media a Entità</h3>
+        <div id="entita-container">
+            <div class="entita-row mb-3">
+                <label for="entita_tipo_1" class="form-label">Tipo di Entità</label>
+                <select class="form-control" id="entita_tipo_1" name="entita_collegate[0][entita_tipo]" required>
+                    <option value="">Seleziona un tipo</option>
+                    <option value="modello">Modello</option>
+                    <option value="veicolo">Veicolo</option>
+                    <option value="azienda_operatrice">Azienda Operatrice</option>
+                    <option value="azienda_costruttrice">Azienda Costruttrice</option>
+                </select>
+                <label for="entita_id_1" class="form-label mt-2">ID Entità</label>
+                <input type="number" class="form-control" id="entita_id_1" name="entita_collegate[0][id_entita]" required>
+                <label for="entita_ruolo_1" class="form-label mt-2">Ruolo</label>
+                <input type="text" class="form-control" id="entita_ruolo_1" name="entita_collegate[0][ruolo]" placeholder="Es. Proprietario, Costruttore">
+            </div>
+        </div>
+        <button type="button" class="btn btn-secondary mb-3" onclick="aggiungiEntita()">Aggiungi Collegamento</button>
+
         <button type="submit" class="btn btn-primary">Proponi Modifiche</button>
         <a href="../visualizza_media.php" class="btn btn-secondary">Annulla</a>
     </form>
+
+    <script>
+        let entitaCounter = 1;
+
+        function aggiungiEntita() {
+            const container = document.getElementById('entita-container');
+            const newRow = document.createElement('div');
+            newRow.className = 'entita-row mb-3';
+            newRow.innerHTML = `
+                <label for="entita_tipo_${entitaCounter}" class="form-label">Tipo di Entità</label>
+                <select class="form-control" id="entita_tipo_${entitaCounter}" name="entita_collegate[${entitaCounter}][entita_tipo]" required>
+                    <option value="">Seleziona un tipo</option>
+                    <option value="modello">Modello</option>
+                    <option value="veicolo">Veicolo</option>
+                    <option value="azienda_operatrice">Azienda Operatrice</option>
+                    <option value="azienda_costruttrice">Azienda Costruttrice</option>
+                </select>
+                <label for="entita_id_${entitaCounter}" class="form-label mt-2">ID Entità</label>
+                <input type="number" class="form-control" id="entita_id_${entitaCounter}" name="entita_collegate[${entitaCounter}][id_entita]" required>
+                <label for="entita_ruolo_${entitaCounter}" class="form-label mt-2">Ruolo</label>
+                <input type="text" class="form-control" id="entita_ruolo_${entitaCounter}" name="entita_collegate[${entitaCounter}][ruolo]" placeholder="Es. Proprietario, Costruttore">
+            `;
+            container.appendChild(newRow);
+            entitaCounter++;
+        }
+    </script>
 </body>
 </html>
