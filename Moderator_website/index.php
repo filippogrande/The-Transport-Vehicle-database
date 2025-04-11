@@ -169,27 +169,31 @@ try {
                     form.method = 'POST';
                     form.submit();
                     break;
-                case 'azienda_costruttrice': // Aggiunto supporto per azienda_costruttrice
+                case 'azienda_costruttrice':
                     form.action = 'gestisci_azienda_costruttrice.php';
                     form.method = 'POST';
                     form.submit();
                     break;
-                case 'azienda_operatrice': // Aggiunto supporto per azienda_operatrice
+                case 'azienda_operatrice':
                     form.action = 'gestisci_azienda_operatrice.php';
                     form.method = 'POST';
                     form.submit();
                     break;
-                case 'veicolo': // Nuovo caso per veicolo
+                case 'veicolo':
                     form.action = 'gestisci_veicolo.php';
                     form.method = 'POST';
                     form.submit();
                     break;
-                case 'possesso_veicolo': // Nuovo caso per possesso_veicolo
+                case 'possesso_veicolo':
                     form.action = 'gestisci_possesso_veicolo.php';
                     form.method = 'POST';
                     form.submit();
                     break;
-                // Aggiungi altri casi se necessario
+                case 'media': // Aggiunto caso per media
+                    form.action = 'gestisci_media.php';
+                    form.method = 'POST';
+                    form.submit();
+                    break;
                 default:
                     alert('Tabella non supportata');
                     break;
