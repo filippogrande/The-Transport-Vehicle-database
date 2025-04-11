@@ -132,6 +132,37 @@ function convertiHeicInJpeg($inputPath, $outputPath) {
         return false;
     }
 }
+
+/**
+ * Recupera le entità in base alla tabella.
+ *
+ * @param string $tabella Nome della tabella.
+ * @return array Lista delle entità.
+ */
+function getEntitaOptions($tabella) {
+    require '../Utilities/dbconnect.php'; // Connessione al database con PDO
+
+    $query = "";
+    switch ($tabella) {
+        case 'modello':
+            $query = "SELECT id_modello AS id, nome FROM modello ORDER BY nome ASC";
+            break;
+        case 'veicolo':
+            $query = "SELECT id_veicolo AS id, numero_targa AS nome FROM veicolo ORDER BY numero_targa ASC";
+            break;
+        case 'azienda_operatrice':
+            $query = "SELECT id_azienda_operatrice AS id, nome_azienda AS nome FROM azienda_operatrice ORDER BY nome_azienda ASC";
+            break;
+        case 'azienda_costruttrice':
+            $query = "SELECT id_azienda_costruttrice AS id, nome_azienda AS nome FROM azienda_costruttrice ORDER BY nome_azienda ASC";
+            break;
+        default:
+            return [];
+    }
+
+    $stmt = $pdo->query($query);
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
 ?>
 
 <!DOCTYPE html>
@@ -141,6 +172,32 @@ function convertiHeicInJpeg($inputPath, $outputPath) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Carica Media</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <script>
+        async function aggiornaEntitaDropdown(index) {
+            const tipoEntita = document.getElementById(`entita_tipo_${index}`).value;
+            const dropdown = document.getElementById(`entita_id_${index}`);
+
+            if (!tipoEntita) {
+                dropdown.innerHTML = '<option value="">Seleziona un\'entità</option>';
+                return;
+            }
+
+            try {
+                const response = await fetch(`/Utilities/get_entita.php?tabella=${tipoEntita}`);
+                const entita = await response.json();
+
+                dropdown.innerHTML = '<option value="">Seleziona un\'entità</option>';
+                entita.forEach(item => {
+                    const option = document.createElement('option');
+                    option.value = item.id;
+                    option.textContent = item.nome;
+                    dropdown.appendChild(option);
+                });
+            } catch (error) {
+                console.error('Errore nel caricamento delle entità:', error);
+            }
+        }
+    </script>
 </head>
 <body class="container mt-4">
     <h1 class="mb-3">Carica Media</h1>
@@ -181,15 +238,17 @@ function convertiHeicInJpeg($inputPath, $outputPath) {
         <div id="entita-container">
             <div class="entita-row mb-3">
                 <label for="entita_tipo_1" class="form-label">Tipo di Entità</label>
-                <select class="form-control" id="entita_tipo_1" name="entita_collegate[0][tabella]" required>
+                <select class="form-control" id="entita_tipo_1" name="entita_collegate[0][tabella]" onchange="aggiornaEntitaDropdown(1)" required>
                     <option value="">Seleziona un tipo</option>
                     <option value="modello">Modello</option>
                     <option value="veicolo">Veicolo</option>
                     <option value="azienda_operatrice">Azienda Operatrice</option>
                     <option value="azienda_costruttrice">Azienda Costruttrice</option>
                 </select>
-                <label for="entita_id_1" class="form-label mt-2">ID Entità</label>
-                <input type="number" class="form-control" id="entita_id_1" name="entita_collegate[0][id]" required>
+                <label for="entita_id_1" class="form-label mt-2">Entità</label>
+                <select class="form-control" id="entita_id_1" name="entita_collegate[0][id]" required>
+                    <option value="">Seleziona un'entità</option>
+                </select>
             </div>
         </div>
         <button type="button" class="btn btn-secondary mb-3" onclick="aggiungiEntita()">Aggiungi Collegamento</button>
@@ -202,23 +261,25 @@ function convertiHeicInJpeg($inputPath, $outputPath) {
         let entitaCounter = 1;
 
         function aggiungiEntita() {
+            entitaCounter++;
             const container = document.getElementById('entita-container');
             const newRow = document.createElement('div');
             newRow.className = 'entita-row mb-3';
             newRow.innerHTML = `
                 <label for="entita_tipo_${entitaCounter}" class="form-label">Tipo di Entità</label>
-                <select class="form-control" id="entita_tipo_${entitaCounter}" name="entita_collegate[${entitaCounter}][tabella]" required>
+                <select class="form-control" id="entita_tipo_${entitaCounter}" name="entita_collegate[${entitaCounter}][tabella]" onchange="aggiornaEntitaDropdown(${entitaCounter})" required>
                     <option value="">Seleziona un tipo</option>
                     <option value="modello">Modello</option>
                     <option value="veicolo">Veicolo</option>
                     <option value="azienda_operatrice">Azienda Operatrice</option>
                     <option value="azienda_costruttrice">Azienda Costruttrice</option>
                 </select>
-                <label for="entita_id_${entitaCounter}" class="form-label mt-2">ID Entità</label>
-                <input type="number" class="form-control" id="entita_id_${entitaCounter}" name="entita_collegate[${entitaCounter}][id]" required>
+                <label for="entita_id_${entitaCounter}" class="form-label mt-2">Entità</label>
+                <select class="form-control" id="entita_id_${entitaCounter}" name="entita_collegate[${entitaCounter}][id]" required>
+                    <option value="">Seleziona un'entità</option>
+                </select>
             `;
             container.appendChild(newRow);
-            entitaCounter++;
         }
     </script>
 </body>
