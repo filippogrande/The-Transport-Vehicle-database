@@ -51,6 +51,28 @@ function eliminaModifiche($id_gruppo_modifica) {
     }
 }
 
+function eliminaPossesso($id_veicolo, $id_azienda_operatrice) {
+    require 'Utilities/dbconnect.php'; // Assicurati che la connessione al database sia disponibile
+
+    try {
+        $query = "
+            DELETE FROM possesso_veicolo 
+            WHERE id_veicolo = :id_veicolo AND id_azienda_operatrice = :id_azienda_operatrice
+        ";
+        $stmt = $pdo->prepare($query);
+        $stmt->bindParam(':id_veicolo', $id_veicolo, PDO::PARAM_INT);
+        $stmt->bindParam(':id_azienda_operatrice', $id_azienda_operatrice, PDO::PARAM_INT);
+
+        if ($stmt->execute()) {
+            echo "<p style='color: green;'>Possesso veicolo eliminato con successo per il veicolo ID: $id_veicolo e azienda ID: $id_azienda_operatrice.</p>";
+        } else {
+            echo "<p style='color: red;'>Errore nell'eliminazione del possesso: " . implode(", ", $stmt->errorInfo()) . "</p>";
+        }
+    } catch (Exception $e) {
+        echo "<p style='color: red;'>Errore durante l'eliminazione del possesso: " . $e->getMessage() . "</p>";
+    }
+}
+
 try {
     // Variabili per accumulare i dati delle modifiche
     $id_veicolo = null;
@@ -78,6 +100,7 @@ try {
         if ($modifica && $modifica['tabella_destinazione'] == 'possesso_veicolo') {
             $campo_modificato = $modifica['campo_modificato'];
             $valore_nuovo = $modifica['valore_nuovo'];
+            $valore_vecchio = $modifica['valore_vecchio'];
 
             if (!in_array($campo_modificato, $campi_validi)) {
                 echo "<p style='color: red;'>Errore: Campo non valido ($campo_modificato).</p>";
@@ -91,9 +114,11 @@ try {
             switch ($campo_modificato) {
                 case 'id_veicolo':
                     $id_veicolo = $valore_nuovo;
+                    $id_veicolo_vecchio = $valore_vecchio;
                     break;
                 case 'id_azienda_operatrice':
                     $id_azienda_operatrice = $valore_nuovo;
+                    $id_azienda_operatrice_vecchia = $valore_vecchio;
                     break;
                 case 'data_inizio_possesso':
                     $data_inizio_possesso = $valore_nuovo;
@@ -116,22 +141,10 @@ try {
         exit; // Interrompi l'esecuzione
     }
 
-    // Elimina l'entry se il nuovo valore di id_azienda_operatrice è null
-    if ($id_azienda_operatrice === null) {
-        $delete_query = "
-            DELETE FROM possesso_veicolo 
-            WHERE id_veicolo = :id_veicolo AND id_azienda_operatrice = :id_azienda_operatrice
-        ";
-        $delete_stmt = $pdo->prepare($delete_query);
-        $delete_stmt->bindParam(':id_veicolo', $id_veicolo, PDO::PARAM_INT);
-        $delete_stmt->bindParam(':id_azienda_operatrice', $modifica['valore_vecchio'], PDO::PARAM_INT);
-
-        if ($delete_stmt->execute()) {
-            echo "<p style='color: green;'>Possesso veicolo eliminato con successo per il veicolo ID: $id_veicolo.</p>";
-            eliminaModifiche($id_gruppo_modifica);
-        } else {
-            echo "<p style='color: red;'>Errore nell'eliminazione: " . implode(", ", $delete_stmt->errorInfo()) . "</p>";
-        }
+    // Elimina l'entry se sia id_veicolo che id_azienda_operatrice hanno un nuovo valore null
+    if ($id_veicolo === null && $id_azienda_operatrice === null) {
+        eliminaPossesso($id_veicolo_vecchio, $id_azienda_operatrice_vecchia);
+        eliminaModifiche($id_gruppo_modifica);
     } else {
         // Inserisci o aggiorna il possesso veicolo nel database
         if ($id_veicolo && $id_azienda_operatrice) {
