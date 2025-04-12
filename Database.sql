@@ -136,6 +136,7 @@ CREATE TABLE stato_modello_azienda (
     demoliti INT DEFAULT 0,
     museo INT DEFAULT 0,
     ceduti INT DEFAULT 0,
+    in_attesa_consegna INT DEFAULT 0,
     descrizione TEXT,
     PRIMARY KEY (id_azienda, id_modello),
     FOREIGN KEY (id_azienda) REFERENCES azienda_operatrice(id_azienda_operatrice) ON DELETE CASCADE,

@@ -104,6 +104,7 @@ try {
                     <th>Demoliti</th>
                     <th>Museo</th>
                     <th>Ceduti</th>
+                    <th>In Attesa di Consegna</th>
                     <th>Descrizione</th>
                 </tr>
             </thead>
@@ -117,6 +118,7 @@ try {
                         <td><?= htmlspecialchars($stato['demoliti']) ?></td>
                         <td><?= htmlspecialchars($stato['museo']) ?></td>
                         <td><?= htmlspecialchars($stato['ceduti']) ?></td>
+                        <td><?= htmlspecialchars($stato['in_attesa_consegna']) ?></td>
                         <td><?= nl2br(htmlspecialchars($stato['descrizione'] ?? 'N/A')) ?></td>
                     </tr>
                 <?php endforeach; ?>

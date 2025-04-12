@@ -29,6 +29,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $demoliti = trim($_POST['demoliti'] ?? 0);
     $museo = trim($_POST['museo'] ?? 0);
     $ceduti = trim($_POST['ceduti'] ?? 0);
+    $in_attesa_consegna = trim($_POST['in_attesa_consegna'] ?? 0); // Nuovo campo
     $descrizione = trim($_POST['descrizione'] ?? null);
 
     // Verifica che azienda e modello siano stati selezionati
@@ -54,6 +55,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             'demoliti' => $demoliti,
             'museo' => $museo,
             'ceduti' => $ceduti,
+            'in_attesa_consegna' => $in_attesa_consegna, // Nuovo campo
             'descrizione' => $descrizione,
         ];
 
@@ -130,6 +132,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <div class="mb-3">
             <label for="ceduti" class="form-label">Ceduti</label>
             <input type="number" class="form-control" id="ceduti" name="ceduti" min="0" value="0">
+        </div>
+        <div class="mb-3">
+            <label for="in_attesa_consegna" class="form-label">In Attesa di Consegna</label>
+            <input type="number" class="form-control" id="in_attesa_consegna" name="in_attesa_consegna" min="0" value="0">
         </div>
         <div class="mb-3">
             <label for="descrizione" class="form-label">Descrizione</label>
