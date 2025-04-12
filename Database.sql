@@ -130,11 +130,16 @@ CREATE TABLE media_entita (
 CREATE TABLE stato_modello_azienda (
     id_azienda INT NOT NULL,
     id_modello INT NOT NULL,
-    stato_veicolo stato_veicolo_enum NOT NULL,
     totale INT DEFAULT 0,
+    attivi INT DEFAULT 0,
+    abbandonati INT DEFAULT 0,
+    demoliti INT DEFAULT 0,
+    museo INT DEFAULT 0,
+    ceduti INT DEFAULT 0,
+    descrizione TEXT,
+    PRIMARY KEY (id_azienda, id_modello),
     FOREIGN KEY (id_azienda) REFERENCES azienda_operatrice(id_azienda_operatrice) ON DELETE CASCADE,
-    FOREIGN KEY (id_modello) REFERENCES modello(id_modello) ON DELETE CASCADE,
-    PRIMARY KEY (id_azienda, id_modello, stato_veicolo)
+    FOREIGN KEY (id_modello) REFERENCES modello(id_modello) ON DELETE CASCADE
 );
 
 CREATE TABLE modifiche_in_sospeso (

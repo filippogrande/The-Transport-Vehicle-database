@@ -31,6 +31,23 @@ try {
 } catch (PDOException $e) {
     die("Errore nel recupero dei dettagli dell'azienda operatrice: " . $e->getMessage());
 }
+
+try {
+    // Recupera i dati di stato_modello_azienda per l'azienda selezionata
+    $query_stato = "
+        SELECT sma.*, m.nome AS nome_modello
+        FROM stato_modello_azienda sma
+        INNER JOIN modello m ON sma.id_modello = m.id_modello
+        WHERE sma.id_azienda = :id_azienda_operatrice
+        ORDER BY m.nome ASC
+    ";
+    $stmt_stato = $pdo->prepare($query_stato);
+    $stmt_stato->bindParam(':id_azienda_operatrice', $id_azienda_operatrice, PDO::PARAM_INT);
+    $stmt_stato->execute();
+    $stati_modello = $stmt_stato->fetchAll(PDO::FETCH_ASSOC);
+} catch (PDOException $e) {
+    die("Errore nel recupero dei dati di stato modello azienda: " . $e->getMessage());
+}
 ?>
 
 <div class="container mt-4">
@@ -68,6 +85,46 @@ try {
             <i class="fas fa-pencil-alt me-2"></i> Modifica
         </a>
     </div>
+
+    <div class="mt-4">
+        <a href="/Aggiunte/crea_stato_modello_azienda.php?id_azienda=<?= urlencode($id_azienda_operatrice) ?>" class="btn btn-success">
+            Crea Stato Modello Azienda
+        </a>
+    </div>
+
+    <h2 class="mt-5">Stato Modello Azienda</h2>
+    <?php if (!empty($stati_modello)): ?>
+        <table class="table table-bordered mt-3">
+            <thead class="table-dark">
+                <tr>
+                    <th>Modello</th>
+                    <th>Totale</th>
+                    <th>Attivi</th>
+                    <th>Abbandonati</th>
+                    <th>Demoliti</th>
+                    <th>Museo</th>
+                    <th>Ceduti</th>
+                    <th>Descrizione</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php foreach ($stati_modello as $stato): ?>
+                    <tr>
+                        <td><?= htmlspecialchars($stato['nome_modello']) ?></td>
+                        <td><?= htmlspecialchars($stato['totale']) ?></td>
+                        <td><?= htmlspecialchars($stato['attivi']) ?></td>
+                        <td><?= htmlspecialchars($stato['abbandonati']) ?></td>
+                        <td><?= htmlspecialchars($stato['demoliti']) ?></td>
+                        <td><?= htmlspecialchars($stato['museo']) ?></td>
+                        <td><?= htmlspecialchars($stato['ceduti']) ?></td>
+                        <td><?= nl2br(htmlspecialchars($stato['descrizione'] ?? 'N/A')) ?></td>
+                    </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
+    <?php else: ?>
+        <p>Non ci sono dati di stato modello azienda per questa azienda.</p>
+    <?php endif; ?>
 </div>
 
 <?php include 'footer.php'; // Include il footer ?>
